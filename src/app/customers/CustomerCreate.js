@@ -41,7 +41,7 @@ export default () => {
             <Form.Group as={Row}>
               <Col sm={{ offset: 2 }}>
                 <SaveButton/>
-                <CancelLink to="/customers"/>
+                <CancelLink/>
               </Col>
             </Form.Group>
           </FormikForm>

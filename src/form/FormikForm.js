@@ -27,6 +27,7 @@ const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formi
 
 export default ({ initialValues, onSubmit, mapServerErrorCodeToLabel, children, ...rest }) =>
   <Formik initialValues={initialValues}
+          enableReinitialize={true}
           initialStatus={{}}
           onSubmit={wrapSubmit(onSubmit, mapServerErrorCodeToLabel)}
           {...rest}

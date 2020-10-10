@@ -1,15 +1,15 @@
 import React, { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
-import { CancelLink, StaticGroup } from '../../form'
+import { CancelLink, EditButton, StaticGroup } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { resourceCache, useAsyncResource } from 'use-async-resource'
 import { getCustomer } from '../../api'
 
 export default () => {
   const { id } = useParams()
-  resourceCache(getCustomer).clear()
-  const [customerReader] = useAsyncResource(getCustomer, id)
+  const resource = {
+    customer: getCustomer(id)
+  }
 
   return (
     <>
@@ -22,12 +22,13 @@ export default () => {
 
           <Form>
             <Suspense fallback={<SkeletonForm/>}>
-              <CustomerDetailForm values={customerReader}/>
+              <CustomerDetailContent values={resource.customer}/>
             </Suspense>
 
             <Form.Group as={Row}>
               <Col sm={{ offset: 2 }}>
-                <CancelLink to="/customers"/>
+                <EditButton/>
+                <CancelLink/>
               </Col>
             </Form.Group>
           </Form>
@@ -37,7 +38,7 @@ export default () => {
   )
 }
 
-const CustomerDetailForm = ({ values }) =>
+const CustomerDetailContent = ({ values }) =>
   <>
-    <StaticGroup label="Name" sm={[2, 10]} value={values().name}/>
+    <StaticGroup label="Name" sm={[2, 10]} value={values.read().name}/>
   </>
