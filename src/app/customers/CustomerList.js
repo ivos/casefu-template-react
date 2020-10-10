@@ -14,6 +14,7 @@ export default () => {
   return <>
     <h2>
       Customers
+
       <Button as={Link} to="/customers/new"
               variant="outline-secondary" className="float-right"
               title="Create new customer...">
@@ -39,6 +40,7 @@ export default () => {
 
 const CustomersTableContent = ({ data }) => {
   const history = useHistory()
+
   const gotoDetail = id => () => {
     history.push(`/customers/${id}`)
   }

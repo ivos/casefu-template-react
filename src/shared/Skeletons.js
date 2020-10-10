@@ -3,9 +3,9 @@ import Skeleton from 'react-loading-skeleton'
 import { useTimeout } from 'react-use'
 import { skeletonDelay } from './constants'
 
-export const SkeletonForm = ({ rows = 3 }) => {
+export const SkeletonForm = ({ rows = 3, height = 49 }) => {
   const [show] = useTimeout(skeletonDelay)
-  return show() && <Skeleton count={rows}/>
+  return show() && <Skeleton count={rows} height={height}/>
 }
 
 export const SkeletonTableRows = ({ columns }) => {

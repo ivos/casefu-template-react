@@ -1,27 +1,13 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
 import * as Yup from 'yup'
+import { useMountedState } from 'react-use'
 import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
+import { SkeletonForm } from '../../shared/Skeletons'
 import { createCustomer } from '../../api'
 
 export default () => {
-  const history = useHistory()
-  const pageHash = window.location.hash
-
-  const initialValues = { name: '' }
-  const validationSchema =
-    Yup.object({
-      name: Yup.string()
-        .required()
-    })
-  const handleSubmit = async data => {
-    await createCustomer(data)
-    if (window.location.hash === pageHash) {
-      history.push('/customers')
-    }
-  }
-
   return (
     <>
       <h2>
@@ -33,20 +19,45 @@ export default () => {
             Customer
           </Card.Title>
 
-          <FormikForm initialValues={initialValues}
-                      validationSchema={validationSchema}
-                      onSubmit={handleSubmit}>
-            <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} required autoFocus/>
-
-            <Form.Group as={Row}>
-              <Col sm={{ offset: 2 }}>
-                <SaveButton/>
-                <CancelLink/>
-              </Col>
-            </Form.Group>
-          </FormikForm>
+          <Suspense fallback={<SkeletonForm rows={1}/>}>
+            <CustomerCreateForm/>
+          </Suspense>
         </Card.Body>
       </Card>
     </>
+  )
+}
+
+const CustomerCreateForm = () => {
+  const isMounted = useMountedState()
+  const history = useHistory()
+
+  const initialValues = { name: '' }
+  const validationSchema =
+    Yup.object({
+      name: Yup.string()
+        .required()
+    })
+  const handleSubmit = async data => {
+    await createCustomer(data)
+    if (isMounted()) {
+      history.push('/customers')
+    }
+  }
+
+  return (
+    <FormikForm initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}>
+
+      <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} required autoFocus/>
+
+      <Form.Group as={Row}>
+        <Col sm={{ offset: 2, span: 9 }}>
+          <SaveButton/>
+          <CancelLink/>
+        </Col>
+      </Form.Group>
+    </FormikForm>
   )
 }
