@@ -21,6 +21,9 @@ const customers = [
 update(data => ({ ...data, customers }))
 
 export const listCustomers = () => Promise.resolve(get().customers).then(delay)
+export const getCustomer = id => Promise.resolve(
+  get().customers.filter(item => item.id === Number(id))[0]
+).then(delay)
 export const createCustomer = values => {
   update(data => {
     const id = data.customers.length ? data.customers.map(({ id }) => id).sort((a, b) => b - a)[0] + 1 : 1

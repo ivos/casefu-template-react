@@ -1,8 +1,8 @@
 import React from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
 import * as Yup from 'yup'
-import { FieldGroup, FormikForm, SaveButton } from '../../form'
+import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
 import { createCustomer } from '../../api'
 
 export default () => {
@@ -41,10 +41,7 @@ export default () => {
             <Form.Group as={Row}>
               <Col sm={{ offset: 2 }}>
                 <SaveButton/>
-                <Link to="/customers"
-                      className="float-right">
-                  Cancel
-                </Link>
+                <CancelLink to="/customers"/>
               </Col>
             </Form.Group>
           </FormikForm>
