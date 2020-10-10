@@ -4,15 +4,19 @@ import { Container } from 'react-bootstrap'
 import './App.css'
 import Header from './layout/Header'
 import Home from './layout/Home'
-import CustomersList from './app/customers/CustomersList'
+import CustomerList from './app/customers/CustomerList'
+import CustomerCreate from './app/customers/CustomerCreate'
 
 export default () => (
   <Router>
     <Header/>
     <Container id="app-container" fluid>
       <Switch>
+        <Route path="/customers/new">
+          <CustomerCreate/>
+        </Route>
         <Route path="/customers">
-          <CustomersList/>
+          <CustomerList/>
         </Route>
         <Route path="/">
           <Home/>

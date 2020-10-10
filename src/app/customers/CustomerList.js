@@ -1,5 +1,7 @@
 import React, { Suspense } from 'react'
-import { Table } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import { Button, Table } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SkeletonTableRows } from '../../shared/SkeletonTableRows'
 import { resourceCache, useAsyncResource } from 'use-async-resource'
 import { listCustomers } from '../../api'
@@ -20,7 +22,15 @@ export default () => {
 
   return (
     <>
-      <h2>Customers</h2>
+      <h2>
+        Customers
+        <Button as={Link} to="/customers/new"
+                variant="outline-secondary" className="float-right"
+                title="Create new customer...">
+          <FontAwesomeIcon icon="plus"/>
+          &nbsp;Create
+        </Button>
+      </h2>
       <Table bordered hover>
         <thead>
         <tr>

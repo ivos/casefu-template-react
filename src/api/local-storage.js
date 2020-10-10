@@ -7,6 +7,8 @@ const update = fn => {
   window.localStorage.setItem(localStorageKey, JSON.stringify(fn(get())))
 }
 
+export const isValidationError = _ => false
+
 // Customers
 const customers = [
   { id: 1, name: 'Gogo' },
@@ -16,6 +18,13 @@ const customers = [
   { id: 5, name: 'Bla bla' },
   { id: 6, name: 'Lulu' },
 ]
-const customersKey = 'customers'
-update(data => ({ ...data, [customersKey]: customers }))
-export const listCustomers = () => Promise.resolve(get()[customersKey]).then(delay)
+update(data => ({ ...data, customers }))
+
+export const listCustomers = () => Promise.resolve(get().customers).then(delay)
+export const createCustomer = values => {
+  update(data => {
+    const id = data.customers.length ? data.customers.map(({ id }) => id).sort((a, b) => b - a)[0] + 1 : 1
+    return { ...data, customers: [...data.customers, { id, ...values }] }
+  })
+  return Promise.resolve(null).then(delay)
+}
