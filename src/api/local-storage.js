@@ -1,5 +1,5 @@
-import { createResource } from './resource'
 import { delay } from './delay'
+import { expire } from './cache-expiration'
 
 const localStorageKey = 'CaseFuGeneratorLocalStorageData'
 
@@ -15,29 +15,50 @@ const nextId = data => data.length
   : 1
 
 // Customers
-const customers = [
-  { id: 1, version: 1, name: 'Gogo' },
-  { id: 2, version: 1, name: 'Huhu' },
-  { id: 3, version: 1, name: 'Fifi' },
-  { id: 4, version: 1, name: 'Pipi' },
-  { id: 5, version: 1, name: 'Bla bla' },
-  { id: 6, version: 1, name: 'Lulu' },
-]
+const customers = []
+Array.from(Array(500)).forEach((_, index) =>
+  customers.push({
+    id: index + 1,
+    version: 0,
+    name: Math.random().toString(36).substring(2)
+  }))
+customers.sort((a, b) => a.name.localeCompare(b.name))
 update(data => ({ ...data, customers }))
 
-export const listCustomers = () => createResource(Promise.resolve(get().customers).then(delay))
-export const getCustomer = id => createResource(Promise.resolve(
-  get().customers.find(item => item.id === Number(id))
-).then(delay))
+export const listCustomers = params => {
+  console.log('listCustomers', params)
+  return Promise.resolve(
+    get().customers.filter(item =>
+      (!params.name || (item.name && item.name.toLowerCase().indexOf(params.name.toLowerCase()) === 0))
+    )
+  )
+    .then(delay)
+    .then(expire(listCustomers, params))
+}
+// ttls.set(listCustomers, 10)
+
+export const getCustomer = id => {
+  console.log('getCustomer', id)
+  return Promise.resolve(
+    get().customers.find(item => item.id === Number(id))
+  )
+    .then(delay)
+    .then(expire(getCustomer, id))
+}
+// ttls.set(getCustomer, 10)
+
 export const createCustomer = values => {
+  console.log('createCustomer', values)
   update(data => {
     const id = nextId(data.customers)
-    data.customers.push({ id, version: 0, ...values })
+    data.customers.push({ ...values, id, version: 0 })
     return data
   })
-  return Promise.resolve(null).then(delay)
+  return Promise.resolve().then(delay)
 }
+
 export const updateCustomer = (id, version, values) => {
+  console.log('updateCustomer', id, version, values)
   id = Number(id)
   version = Number(version)
   update(data => {
@@ -49,5 +70,5 @@ export const updateCustomer = (id, version, values) => {
     data.customers[index] = { ...values, id, version }
     return data
   })
-  return Promise.resolve(null).then(delay)
+  return Promise.resolve().then(delay)
 }

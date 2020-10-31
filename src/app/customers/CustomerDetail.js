@@ -3,14 +3,11 @@ import { useParams } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
 import { CancelLink, EditButton, StaticGroup } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { getCustomer } from '../../api'
+import { getCustomer, useResource } from '../../api'
 
 export default () => {
   const { id } = useParams()
-
-  const resource = {
-    customer: getCustomer(id)
-  }
+  const [customerReader] = useResource(getCustomer, id)
 
   return (
     <>
@@ -24,7 +21,7 @@ export default () => {
           </Card.Title>
 
           <Suspense fallback={<SkeletonForm rows={1}/>}>
-            <CustomerDetailForm values={resource.customer}/>
+            <CustomerDetailForm valuesReader={customerReader}/>
           </Suspense>
         </Card.Body>
       </Card>
@@ -32,10 +29,10 @@ export default () => {
   )
 }
 
-const CustomerDetailForm = ({ values }) =>
+const CustomerDetailForm = ({ valuesReader }) =>
   <Form>
 
-    <StaticGroup label="Name" sm={[2, 10]} value={values.read().name}/>
+    <StaticGroup label="Name" sm={[2, 10]} value={valuesReader().name}/>
 
     <Form.Group as={Row}>
       <Col sm={{ offset: 2, span: 9 }}>

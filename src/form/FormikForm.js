@@ -4,6 +4,18 @@ import { Form } from 'react-bootstrap'
 import FocusError from './FocusError'
 import { isValidationError } from '../api'
 
+const mapValues = (values, fn) =>
+  Object.fromEntries(
+    Object.entries(values)
+      .map(([key, value]) => [key, fn(value)])
+  )
+
+const nullValuesToEmpty = values =>
+  mapValues(values, value => value === null || value === undefined ? '' : value)
+
+const emptyValuesToNulls = values =>
+  mapValues(values, value => value === '' ? null : value)
+
 const mapServerErrorCodesToLabels = (mapServerErrorCodeToLabel, serverErrors) => {
   return Object.fromEntries(
     serverErrors
@@ -14,7 +26,7 @@ const mapServerErrorCodesToLabels = (mapServerErrorCodeToLabel, serverErrors) =>
 const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formikBag) => {
   formikBag.setStatus({})
   try {
-    return await onSubmit(values, formikBag)
+    return await onSubmit(emptyValuesToNulls(values), formikBag)
   } catch (error) {
     if (isValidationError(error)) {
       const { errors: serverErrors } = error.response.data
@@ -26,7 +38,7 @@ const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formi
 }
 
 export default ({ initialValues, onSubmit, mapServerErrorCodeToLabel, children, ...rest }) =>
-  <Formik initialValues={initialValues}
+  <Formik initialValues={nullValuesToEmpty(initialValues)}
           enableReinitialize={true}
           initialStatus={{}}
           onSubmit={wrapSubmit(onSubmit, mapServerErrorCodeToLabel)}
