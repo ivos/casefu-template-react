@@ -36,9 +36,9 @@ export const clearFnCache = apiFunction => value => {
   return value
 }
 
-export const clearAllCaches = () => {
-  timers.keys()
-    .forEach(apiFunction => {
-      resourceCache(apiFunction).clear()
-    })
+export const clearAllCaches = value => {
+  timers.forEach((_, apiFunction) => {
+    resourceCache(apiFunction).clear()
+  })
+  return value
 }

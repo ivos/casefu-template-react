@@ -1,5 +1,5 @@
 import { delay } from './delay'
-import { clearFnCache, expire } from './cache-expiration'
+import { clearAllCaches, clearFnCache, expire } from './cache-expiration'
 
 const localStorageKey = 'CaseFuGeneratorLocalStorageData'
 
@@ -78,5 +78,7 @@ export const updateCustomer = (id, version, values) => {
     sortCustomers(data.customers)
     return data
   })
-  return Promise.resolve().then(delay)
+  return Promise.resolve()
+    .then(delay)
+    .then(clearAllCaches)
 }
