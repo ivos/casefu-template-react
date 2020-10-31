@@ -1,5 +1,5 @@
 import { delay } from './delay'
-import { expire } from './cache-expiration'
+import { clearFnCache, expire } from './cache-expiration'
 
 const localStorageKey = 'CaseFuGeneratorLocalStorageData'
 
@@ -22,7 +22,10 @@ Array.from(Array(500)).forEach((_, index) =>
     version: 0,
     name: Math.random().toString(36).substring(2)
   }))
-customers.sort((a, b) => a.name.localeCompare(b.name))
+const sortCustomers = customers => {
+  customers.sort((a, b) => a.name.localeCompare(b.name))
+}
+sortCustomers(customers)
 update(data => ({ ...data, customers }))
 
 export const listCustomers = params => {
@@ -49,12 +52,16 @@ export const getCustomer = id => {
 
 export const createCustomer = values => {
   console.log('createCustomer', values)
+  let id
   update(data => {
-    const id = nextId(data.customers)
+    id = nextId(data.customers)
     data.customers.push({ ...values, id, version: 0 })
+    sortCustomers(data.customers)
     return data
   })
-  return Promise.resolve().then(delay)
+  return Promise.resolve({ id })
+    .then(delay)
+    .then(clearFnCache(listCustomers))
 }
 
 export const updateCustomer = (id, version, values) => {
@@ -68,6 +75,7 @@ export const updateCustomer = (id, version, values) => {
     }
     version++
     data.customers[index] = { ...values, id, version }
+    sortCustomers(data.customers)
     return data
   })
   return Promise.resolve().then(delay)

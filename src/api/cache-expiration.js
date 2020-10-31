@@ -30,3 +30,15 @@ export const expire = (apiFunction, ...args) => (result) => {
   setTimer(apiFunction, ...args)
   return result
 }
+
+export const clearFnCache = apiFunction => value => {
+  resourceCache(apiFunction).clear()
+  return value
+}
+
+export const clearAllCaches = () => {
+  timers.keys()
+    .forEach(apiFunction => {
+      resourceCache(apiFunction).clear()
+    })
+}

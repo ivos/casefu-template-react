@@ -39,9 +39,9 @@ const CustomerCreateForm = () => {
         .required()
     })
   const handleSubmit = async data => {
-    await createCustomer(data)
+    const { id } = await createCustomer(data)
     if (isMounted()) {
-      history.push('/customers')
+      history.push(`/customers/${id}`)
     }
   }
 
