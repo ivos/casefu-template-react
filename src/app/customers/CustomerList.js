@@ -1,16 +1,27 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Button, Card, Form, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useMount } from 'react-use'
 import { AutoSubmit, FieldGroup, FormikForm } from '../../form'
 import { SkeletonTableRows } from '../../shared/Skeletons'
 import { listCustomers, useResource } from '../../api'
-import { onEnter } from '../../shared/utils'
+import { onEnter, toUrlParams, useUrlParams } from '../../shared/utils'
 
-let searchValues = { name: null }
+let searchValuesCache = { name: null }
 
 export default () => {
+  const [searchValues, setSearchValues] = useState(searchValuesCache)
+  const urlParams = useUrlParams(searchValues)
+  useMount(() => {
+    setSearchValues(urlParams)
+  })
   const [customersReader, customersLoader] = useResource(listCustomers, searchValues)
+  const history = useHistory()
+
+  useEffect(() => {
+    history.replace(`/customers?${toUrlParams(searchValues)}`)
+  }, [history, searchValues])
 
   return <>
     <h2>
@@ -23,7 +34,9 @@ export default () => {
         &nbsp;Create
       </Button>
     </h2>
-    <CustomersSearchForm dataLoader={customersLoader}/>
+    <CustomersSearchForm dataLoader={customersLoader}
+                         searchValues={searchValues}
+                         setSearchValues={setSearchValues}/>
     <Table bordered hover>
       <thead>
       <tr>
@@ -40,10 +53,11 @@ export default () => {
   </>
 }
 
-const CustomersSearchForm = ({ dataLoader }) =>
+const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues }) =>
   <FormikForm initialValues={searchValues}
               onSubmit={values => {
-                searchValues = values
+                setSearchValues(values)
+                searchValuesCache = values
                 dataLoader(values)
               }}>
 
