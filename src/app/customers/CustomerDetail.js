@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
+import { sentenceCase } from 'change-case'
 import { CancelLink, EditButton, SavingButton, StaticGroup } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
 import { getCustomer, patchCustomer, useResource } from '../../api'
@@ -41,7 +42,7 @@ const CustomerDetailForm = ({ valuesReader, refresh }) => {
     <Form>
 
       <StaticGroup label="Name" sm={[2, 10]} value={valuesReader().name}/>
-      <StaticGroup label="Status" sm={[2, 10]} value={valuesReader().status}/>
+      <StaticGroup label="Status" sm={[2, 10]} value={sentenceCase(valuesReader().status)}/>
 
       <Form.Group as={Row}>
         <Col sm={{ offset: 2, span: 9 }}>

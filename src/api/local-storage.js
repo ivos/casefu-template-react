@@ -62,7 +62,7 @@ export const createCustomer = values => {
   let id
   update(data => {
     id = nextId(data.customers)
-    data.customers.push({ ...values, id, version: 0 })
+    data.customers.push({ ...values, status: 'active', id, version: 0 })
     sortCustomers(data.customers)
     return data
   })

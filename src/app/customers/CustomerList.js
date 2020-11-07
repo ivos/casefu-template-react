@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { Button, Card, Form, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useMount } from 'react-use'
+import { sentenceCase } from 'change-case'
 import { AutoSubmit, FieldGroup, FormikForm } from '../../form'
 import { SkeletonTableRows } from '../../shared/Skeletons'
 import { listCustomers, useResource } from '../../api'
@@ -90,7 +91,15 @@ const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues, resetP
     <Card className="mb-3">
       <Card.Body>
         <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} autoFocus isValid={false}/>
-        <FieldGroup as={Form.Control} name="status" label="Status" sm={[2, 9]} isValid={false}/>
+        <FieldGroup name="status" label="Status" sm={[2, 9]} isValid={false}>
+          {({ field }) =>
+            <Form.Control as="select" {...field}>
+              <option/>
+              <option value="active">Active</option>
+              <option value="disabled">Disabled</option>
+            </Form.Control>
+          }
+        </FieldGroup>
       </Card.Body>
     </Card>
 
@@ -126,7 +135,7 @@ const CustomersTableContent = ({ dataReader, setLastPage }) => {
         tabIndex="0" onClick={gotoDetail(item.id)} onKeyUp={onEnter(gotoDetail(item.id))}>
       <td>{item.id}</td>
       <td>{item.name}</td>
-      <td>{item.status}</td>
+      <td>{sentenceCase(item.status)}</td>
     </tr>
   ))
 }
