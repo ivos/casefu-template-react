@@ -1,4 +1,5 @@
 import { delay } from './delay'
+import { defaultPageSize } from '../shared/constants'
 import { clearAllCaches, clearFnCache, expire } from './cache-expiration'
 
 const localStorageKey = 'CaseFuGeneratorLocalStorageData'
@@ -15,6 +16,7 @@ const nextId = data => data.length
   : 1
 
 // Customers
+const customersPageSize = defaultPageSize
 const customers = []
 Array.from(Array(500)).forEach((_, index) =>
   customers.push({
@@ -28,12 +30,15 @@ const sortCustomers = customers => {
 sortCustomers(customers)
 update(data => ({ ...data, customers }))
 
-export const listCustomers = params => {
+export const listCustomers = (params) => {
   console.log('listCustomers', params)
+  const page = params.$page || 0
   return Promise.resolve(
-    get().customers.filter(item =>
-      (!params.name || (item.name && item.name.toLowerCase().indexOf(params.name.toLowerCase()) === 0))
-    )
+    get().customers
+      .filter(item =>
+        (!params.name || (item.name && item.name.toLowerCase().indexOf(params.name.toLowerCase()) === 0))
+      )
+      .slice(page * customersPageSize, (page + 1) * customersPageSize)
   )
     .then(delay)
     .then(expire(listCustomers, params))

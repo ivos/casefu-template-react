@@ -17,11 +17,18 @@ export default () => {
     setSearchValues(urlParams)
   })
   const [customersReader, customersLoader] = useResource(listCustomers, searchValues)
+  const [pages, setPages] = useState(0)
+  const [lastPage, setLastPage] = useState(false)
   const history = useHistory()
 
   useEffect(() => {
     history.replace(`/customers?${toUrlParams(searchValues)}`)
   }, [history, searchValues])
+
+  const resetPages = () => {
+    setPages(0)
+    setLastPage(false)
+  }
 
   return <>
     <h2>
@@ -36,7 +43,8 @@ export default () => {
     </h2>
     <CustomersSearchForm dataLoader={customersLoader}
                          searchValues={searchValues}
-                         setSearchValues={setSearchValues}/>
+                         setSearchValues={setSearchValues}
+                         resetPages={resetPages}/>
     <Table bordered hover>
       <thead>
       <tr>
@@ -46,19 +54,36 @@ export default () => {
       </thead>
       <tbody>
       <Suspense fallback={<SkeletonTableRows columns={2}/>}>
-        <CustomersTableContent dataReader={customersReader}/>
+        <CustomersTableContent dataReader={customersReader}
+                               setLastPage={setLastPage}/>
       </Suspense>
+      {
+        [...Array(pages)]
+          .map((_, index) =>
+            <CustomersTablePage searchValues={searchValues}
+                                $page={index + 1}
+                                setLastPage={setLastPage}
+                                key={`page-${index}`}/>
+          )
+      }
       </tbody>
     </Table>
+
+    <Button variant="outline-secondary"
+            disabled={lastPage}
+            onClick={() => setPages(pages + 1)}>
+      Load next
+    </Button>
   </>
 }
 
-const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues }) =>
+const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues, resetPages }) =>
   <FormikForm initialValues={searchValues}
               onSubmit={values => {
                 setSearchValues(values)
                 searchValuesCache = values
                 dataLoader(values)
+                resetPages()
               }}>
 
     <Card className="mb-3">
@@ -70,8 +95,25 @@ const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues }) =>
     <AutoSubmit/>
   </FormikForm>
 
-const CustomersTableContent = ({ dataReader }) => {
+const CustomersTablePage = ({ searchValues, $page, setLastPage }) => {
+  const [pageReader] = useResource(listCustomers, { ...searchValues, $page })
+
+  return <>
+    <Suspense fallback={<SkeletonTableRows columns={2}/>}>
+      <CustomersTableContent dataReader={pageReader}
+                             setLastPage={setLastPage}/>
+    </Suspense>
+  </>
+}
+
+const CustomersTableContent = ({ dataReader, setLastPage }) => {
   const history = useHistory()
+
+  useEffect(() => {
+    if (dataReader().length === 0) {
+      setLastPage(true)
+    }
+  })
 
   const gotoDetail = id => () => {
     history.push(`/customers/${id}`)
