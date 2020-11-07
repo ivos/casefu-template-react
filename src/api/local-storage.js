@@ -22,7 +22,8 @@ Array.from(Array(500)).forEach((_, index) =>
   customers.push({
     id: index + 1,
     version: 0,
-    name: Math.random().toString(36).substring(2)
+    name: Math.random().toString(36).substring(2),
+    status: 'active'
   }))
 const sortCustomers = customers => {
   customers.sort((a, b) => a.name.localeCompare(b.name))
@@ -36,7 +37,8 @@ export const listCustomers = (params) => {
   return Promise.resolve(
     get().customers
       .filter(item =>
-        (!params.name || (item.name && item.name.toLowerCase().indexOf(params.name.toLowerCase()) === 0))
+        (!params.name || (item.name && item.name.toLowerCase().indexOf(params.name.toLowerCase()) === 0)) &&
+        (!params.status || (item.status === params.status))
       )
       .slice(page * customersPageSize, (page + 1) * customersPageSize)
   )
@@ -69,8 +71,7 @@ export const createCustomer = values => {
     .then(clearFnCache(listCustomers))
 }
 
-export const updateCustomer = (id, version, values) => {
-  console.log('updateCustomer', id, version, values)
+const modifyCustomer = (id, version, modificationFn) => {
   id = Number(id)
   version = Number(version)
   update(data => {
@@ -79,11 +80,23 @@ export const updateCustomer = (id, version, values) => {
       throw new Error(`Customer with id ${id} and version ${version} not found.`)
     }
     version++
-    data.customers[index] = { ...values, id, version }
+    data.customers[index] = modificationFn(id, version, data.customers[index])
     sortCustomers(data.customers)
     return data
   })
   return Promise.resolve()
     .then(delay)
     .then(clearAllCaches)
+}
+
+export const updateCustomer = (id, version, values) => {
+  console.log('updateCustomer', id, version, values)
+  return modifyCustomer(id, version,
+    (id, version) => ({ ...values, id, version }))
+}
+
+export const patchCustomer = (id, version, values) => {
+  console.log('patchCustomer', id, version, values)
+  return modifyCustomer(id, version,
+    (id, version, oldValues) => ({ ...oldValues, ...values, id, version }))
 }

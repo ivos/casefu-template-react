@@ -1,13 +1,14 @@
 import React, { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
-import { CancelLink, EditButton, StaticGroup } from '../../form'
+import { CancelLink, EditButton, SavingButton, StaticGroup } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { getCustomer, useResource } from '../../api'
+import { getCustomer, patchCustomer, useResource } from '../../api'
 
 export default () => {
   const { id } = useParams()
-  const [customerReader] = useResource(getCustomer, id)
+  const [customerReader, customerLoader] = useResource(getCustomer, id)
+  const refresh = () => customerLoader(id)
 
   return (
     <>
@@ -21,7 +22,8 @@ export default () => {
           </Card.Title>
 
           <Suspense fallback={<SkeletonForm rows={1}/>}>
-            <CustomerDetailForm valuesReader={customerReader}/>
+            <CustomerDetailForm valuesReader={customerReader}
+                                refresh={refresh}/>
           </Suspense>
         </Card.Body>
       </Card>
@@ -29,15 +31,36 @@ export default () => {
   )
 }
 
-const CustomerDetailForm = ({ valuesReader }) =>
-  <Form>
+const CustomerDetailForm = ({ valuesReader, refresh }) => {
+  const patch = values => async () => {
+    await patchCustomer(valuesReader().id, valuesReader().version, values)
+    refresh()
+  }
 
-    <StaticGroup label="Name" sm={[2, 10]} value={valuesReader().name}/>
+  return <>
+    <Form>
 
-    <Form.Group as={Row}>
-      <Col sm={{ offset: 2, span: 9 }}>
-        <EditButton/>
-        <CancelLink/>
-      </Col>
-    </Form.Group>
-  </Form>
+      <StaticGroup label="Name" sm={[2, 10]} value={valuesReader().name}/>
+      <StaticGroup label="Status" sm={[2, 10]} value={valuesReader().status}/>
+
+      <Form.Group as={Row}>
+        <Col sm={{ offset: 2, span: 9 }}>
+          <EditButton className="mr-2" autoFocus/>
+
+          <SavingButton variant="warning" className="mr-1"
+                        disabled={valuesReader().status === 'disabled'}
+                        onClick={patch({ status: 'disabled' })}>
+            Disabled
+          </SavingButton>
+          <SavingButton variant="warning"
+                        disabled={valuesReader().status === 'active'}
+                        onClick={patch({ status: 'active' })}>
+            Active
+          </SavingButton>
+
+          <CancelLink/>
+        </Col>
+      </Form.Group>
+    </Form>
+  </>
+}

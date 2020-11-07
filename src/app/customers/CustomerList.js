@@ -8,7 +8,7 @@ import { SkeletonTableRows } from '../../shared/Skeletons'
 import { listCustomers, useResource } from '../../api'
 import { onEnter, toUrlParams, useUrlParams } from '../../shared/utils'
 
-let searchValuesCache = { name: null }
+let searchValuesCache = { name: null, status: null }
 
 export default () => {
   const [searchValues, setSearchValues] = useState(searchValuesCache)
@@ -50,10 +50,11 @@ export default () => {
       <tr>
         <th>#</th>
         <th>Name</th>
+        <th>Status</th>
       </tr>
       </thead>
       <tbody>
-      <Suspense fallback={<SkeletonTableRows columns={2}/>}>
+      <Suspense fallback={<SkeletonTableRows columns={3}/>}>
         <CustomersTableContent dataReader={customersReader}
                                setLastPage={setLastPage}/>
       </Suspense>
@@ -89,6 +90,7 @@ const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues, resetP
     <Card className="mb-3">
       <Card.Body>
         <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} autoFocus isValid={false}/>
+        <FieldGroup as={Form.Control} name="status" label="Status" sm={[2, 9]} isValid={false}/>
       </Card.Body>
     </Card>
 
@@ -124,6 +126,7 @@ const CustomersTableContent = ({ dataReader, setLastPage }) => {
         tabIndex="0" onClick={gotoDetail(item.id)} onKeyUp={onEnter(gotoDetail(item.id))}>
       <td>{item.id}</td>
       <td>{item.name}</td>
+      <td>{item.status}</td>
     </tr>
   ))
 }
