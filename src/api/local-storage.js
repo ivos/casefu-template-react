@@ -1,6 +1,7 @@
+import qs from 'qs'
+import useSWR from 'swr'
 import { delay } from './delay'
 import { defaultPageSize } from '../shared/constants'
-import { clearAllCaches, clearFnCache, expire } from './cache-expiration'
 
 const localStorageKey = 'CaseFuGeneratorLocalStorageData'
 
@@ -31,7 +32,7 @@ const sortCustomers = customers => {
 sortCustomers(customers)
 update(data => ({ ...data, customers }))
 
-export const listCustomers = (params) => {
+const listCustomers = params => {
   console.log('listCustomers', params)
   const page = params.$page || 0
   return Promise.resolve(
@@ -41,21 +42,20 @@ export const listCustomers = (params) => {
         (!params.status || (item.status === params.status))
       )
       .slice(page * customersPageSize, (page + 1) * customersPageSize)
-  )
-    .then(delay)
-    .then(expire(listCustomers, params))
+  ).then(delay)
 }
-// ttls.set(listCustomers, 10)
+export const useCustomers = (params, $page = 0) =>
+  useSWR(['/customers',
+    qs.stringify(params), $page], () => listCustomers({ ...params, $page }), { suspense: true })
 
-export const getCustomer = id => {
+const getCustomer = id => {
   console.log('getCustomer', id)
   return Promise.resolve(
     get().customers.find(item => item.id === Number(id))
-  )
-    .then(delay)
-    .then(expire(getCustomer, id))
+  ).then(delay)
 }
-// ttls.set(getCustomer, 10)
+export const useCustomer = id =>
+  useSWR(`/customers/${id}`, () => getCustomer(id), { suspense: true })
 
 export const createCustomer = values => {
   console.log('createCustomer', values)
@@ -66,9 +66,7 @@ export const createCustomer = values => {
     sortCustomers(data.customers)
     return data
   })
-  return Promise.resolve({ id })
-    .then(delay)
-    .then(clearFnCache(listCustomers))
+  return Promise.resolve({ id }).then(delay)
 }
 
 const modifyCustomer = (id, version, modificationFn) => {
@@ -84,9 +82,7 @@ const modifyCustomer = (id, version, modificationFn) => {
     sortCustomers(data.customers)
     return data
   })
-  return Promise.resolve()
-    .then(delay)
-    .then(clearAllCaches)
+  return Promise.resolve().then(delay)
 }
 
 export const updateCustomer = (id, version, values) => {

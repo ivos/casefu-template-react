@@ -5,11 +5,10 @@ import * as Yup from 'yup'
 import { useMountedState } from 'react-use'
 import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { getCustomer, updateCustomer, useResource } from '../../api'
+import { updateCustomer, useCustomer } from '../../api'
 
 export default () => {
   const { id } = useParams()
-  const [customerReader] = useResource(getCustomer, id)
 
   return (
     <>
@@ -23,7 +22,7 @@ export default () => {
           </Card.Title>
 
           <Suspense fallback={<SkeletonForm rows={1}/>}>
-            <CustomerEditForm valuesReader={customerReader}/>
+            <CustomerEditForm id={id}/>
           </Suspense>
         </Card.Body>
       </Card>
@@ -31,9 +30,10 @@ export default () => {
   )
 }
 
-const CustomerEditForm = ({ valuesReader }) => {
+const CustomerEditForm = ({ id }) => {
   const isMounted = useMountedState()
   const history = useHistory()
+  const { data: customer } = useCustomer(id)
 
   const validationSchema =
     Yup.object({
@@ -41,14 +41,14 @@ const CustomerEditForm = ({ valuesReader }) => {
         .required()
     })
   const handleSubmit = async data => {
-    await updateCustomer(valuesReader().id, valuesReader().version, data)
+    await updateCustomer(customer.id, customer.version, data)
     if (isMounted()) {
-      history.push(`/customers/${valuesReader().id}`)
+      history.push(`/customers/${customer.id}`)
     }
   }
 
   return (
-    <FormikForm initialValues={valuesReader()}
+    <FormikForm initialValues={customer}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}>
 

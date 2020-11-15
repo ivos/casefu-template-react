@@ -2,14 +2,12 @@ import React, { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
-import { CancelLink, EditButton, SavingButton, StaticGroup } from '../../form'
+import { CancelLink, EditButton, Revalidating, SavingButton, StaticGroup } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { getCustomer, patchCustomer, useResource } from '../../api'
+import { patchCustomer, useCustomer } from '../../api'
 
 export default () => {
   const { id } = useParams()
-  const [customerReader, customerLoader] = useResource(getCustomer, id)
-  const refresh = () => customerLoader(id)
 
   return (
     <>
@@ -23,8 +21,7 @@ export default () => {
           </Card.Title>
 
           <Suspense fallback={<SkeletonForm rows={1}/>}>
-            <CustomerDetailForm valuesReader={customerReader}
-                                refresh={refresh}/>
+            <CustomerDetailForm id={id}/>
           </Suspense>
         </Card.Body>
       </Card>
@@ -32,29 +29,33 @@ export default () => {
   )
 }
 
-const CustomerDetailForm = ({ valuesReader, refresh }) => {
+const CustomerDetailForm = ({ id }) => {
+  const { data: customer, revalidate, isValidating } = useCustomer(id)
+
   const patch = values => async () => {
-    await patchCustomer(valuesReader().id, valuesReader().version, values)
-    refresh()
+    await patchCustomer(customer.id, customer.version, values)
+    revalidate()
   }
 
   return <>
     <Form>
 
-      <StaticGroup label="Name" sm={[2, 10]} value={valuesReader().name}/>
-      <StaticGroup label="Status" sm={[2, 10]} value={sentenceCase(valuesReader().status)}/>
+      <Revalidating isValidating={isValidating}>
+        <StaticGroup label="Name" sm={[2, 10]} value={customer.name}/>
+        <StaticGroup label="Status" sm={[2, 10]} value={sentenceCase(customer.status)}/>
+      </Revalidating>
 
       <Form.Group as={Row}>
         <Col sm={{ offset: 2, span: 9 }}>
           <EditButton className="mr-2" autoFocus/>
 
           <SavingButton variant="warning" className="mr-1"
-                        disabled={valuesReader().status === 'disabled'}
+                        disabled={customer.status === 'disabled'}
                         onClick={patch({ status: 'disabled' })}>
             Disabled
           </SavingButton>
           <SavingButton variant="warning"
-                        disabled={valuesReader().status === 'active'}
+                        disabled={customer.status === 'active'}
                         onClick={patch({ status: 'active' })}>
             Active
           </SavingButton>

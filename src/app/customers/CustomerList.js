@@ -4,9 +4,9 @@ import { Button, Card, Form, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useMount } from 'react-use'
 import { sentenceCase } from 'change-case'
-import { AutoSubmit, FieldGroup, FormikForm } from '../../form'
+import { AutoSubmit, FieldGroup, FormikForm, Revalidating } from '../../form'
 import { SkeletonTableRows } from '../../shared/Skeletons'
-import { listCustomers, useResource } from '../../api'
+import { useCustomers } from '../../api'
 import { onEnter, toUrlParams, useUrlParams } from '../../shared/utils'
 
 let searchValuesCache = { name: null, status: null }
@@ -17,9 +17,8 @@ export default () => {
   useMount(() => {
     setSearchValues(urlParams)
   })
-  const [customersReader, customersLoader] = useResource(listCustomers, searchValues)
-  const [pages, setPages] = useState(0)
-  const [lastPage, setLastPage] = useState(false)
+  const [pagesCount, setPagesCount] = useState(1)
+  const [isLastPage, setIsLastPage] = useState(false)
   const history = useHistory()
 
   useEffect(() => {
@@ -27,8 +26,8 @@ export default () => {
   }, [history, searchValues])
 
   const resetPages = () => {
-    setPages(0)
-    setLastPage(false)
+    setPagesCount(1)
+    setIsLastPage(false)
   }
 
   return <>
@@ -42,8 +41,7 @@ export default () => {
         &nbsp;Create
       </Button>
     </h2>
-    <CustomersSearchForm dataLoader={customersLoader}
-                         searchValues={searchValues}
+    <CustomersSearchForm searchValues={searchValues}
                          setSearchValues={setSearchValues}
                          resetPages={resetPages}/>
     <Table bordered hover>
@@ -55,37 +53,34 @@ export default () => {
       </tr>
       </thead>
       <tbody>
-      <Suspense fallback={<SkeletonTableRows columns={3}/>}>
-        <CustomersTableContent dataReader={customersReader}
-                               setLastPage={setLastPage}/>
-      </Suspense>
       {
-        [...Array(pages)]
+        [...Array(pagesCount)]
           .map((_, index) =>
-            <CustomersTablePage searchValues={searchValues}
-                                $page={index + 1}
-                                setLastPage={setLastPage}
-                                key={`page-${index}`}/>
+            <Suspense fallback={<SkeletonTableRows columns={3}/>}
+                      key={`page-${index}`}>
+              <CustomersTablePage searchValues={searchValues}
+                                  $page={index}
+                                  setIsLastPage={setIsLastPage}/>
+            </Suspense>
           )
       }
       </tbody>
     </Table>
 
     <Button variant="outline-secondary"
-            disabled={lastPage}
-            onClick={() => setPages(pages + 1)}>
+            disabled={isLastPage}
+            onClick={() => setPagesCount(pagesCount + 1)}>
       Load next
     </Button>
   </>
 }
 
-const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues, resetPages }) =>
+const CustomersSearchForm = ({ searchValues, setSearchValues, resetPages }) =>
   <FormikForm initialValues={searchValues}
               onSubmit={values => {
+                resetPages()
                 setSearchValues(values)
                 searchValuesCache = values
-                dataLoader(values)
-                resetPages()
               }}>
 
     <Card className="mb-3">
@@ -106,23 +101,13 @@ const CustomersSearchForm = ({ dataLoader, searchValues, setSearchValues, resetP
     <AutoSubmit/>
   </FormikForm>
 
-const CustomersTablePage = ({ searchValues, $page, setLastPage }) => {
-  const [pageReader] = useResource(listCustomers, { ...searchValues, $page })
-
-  return <>
-    <Suspense fallback={<SkeletonTableRows columns={2}/>}>
-      <CustomersTableContent dataReader={pageReader}
-                             setLastPage={setLastPage}/>
-    </Suspense>
-  </>
-}
-
-const CustomersTableContent = ({ dataReader, setLastPage }) => {
+const CustomersTablePage = ({ searchValues, $page, setIsLastPage }) => {
+  const { data: customers, isValidating } = useCustomers(searchValues, $page)
   const history = useHistory()
 
   useEffect(() => {
-    if (dataReader().length === 0) {
-      setLastPage(true)
+    if (customers.length === 0) {
+      setIsLastPage(true)
     }
   })
 
@@ -130,12 +115,14 @@ const CustomersTableContent = ({ dataReader, setLastPage }) => {
     history.push(`/customers/${id}`)
   }
 
-  return dataReader().map(item => (
-    <tr key={item.id}
-        tabIndex="0" onClick={gotoDetail(item.id)} onKeyUp={onEnter(gotoDetail(item.id))}>
+  return customers.map(item => (
+    <Revalidating as="tr"
+                  isValidating={isValidating}
+                  key={item.id}
+                  tabIndex="0" onClick={gotoDetail(item.id)} onKeyUp={onEnter(gotoDetail(item.id))}>
       <td>{item.id}</td>
       <td>{item.name}</td>
       <td>{sentenceCase(item.status)}</td>
-    </tr>
+    </Revalidating>
   ))
 }
