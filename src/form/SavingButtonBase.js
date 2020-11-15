@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { spinnerDelay } from '../shared/constants'
 
-export default ({ saving, onClick, children, ...rest }) => {
+export default ({ saving, onClick, disabled, children, ...rest }) => {
   const [spinner, setSpinner] = useState(true)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default ({ saving, onClick, children, ...rest }) => {
   }
 
   return <>
-    <Button disabled={saving}
+    <Button disabled={saving || disabled}
             onClick={handleClick}
             {...rest}>
       {children}

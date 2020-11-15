@@ -50,12 +50,12 @@ const CustomerDetailForm = ({ id }) => {
           <EditButton className="mr-2" autoFocus/>
 
           <SavingButton variant="warning" className="mr-1"
-                        disabled={customer.status === 'disabled'}
+                        disabled={isValidating || customer.status === 'disabled'}
                         onClick={patch({ status: 'disabled' })}>
             Disabled
           </SavingButton>
           <SavingButton variant="warning"
-                        disabled={customer.status === 'active'}
+                        disabled={isValidating || customer.status === 'active'}
                         onClick={patch({ status: 'active' })}>
             Active
           </SavingButton>
