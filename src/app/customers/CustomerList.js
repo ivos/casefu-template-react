@@ -7,7 +7,7 @@ import { sentenceCase } from 'change-case'
 import { AutoSubmit, FieldGroup, FormikForm, Revalidating } from '../../form'
 import { SkeletonTableRows } from '../../shared/Skeletons'
 import { useCustomers } from '../../api'
-import { onEnter, toUrlParams, useUrlParams } from '../../shared/utils'
+import { onEnter, toUrlParams, usePaging, useUrlParams } from '../../shared/utils'
 
 let searchValuesCache = { name: null, status: null }
 
@@ -17,18 +17,12 @@ export default () => {
   useMount(() => {
     setSearchValues(urlParams)
   })
-  const [pagesCount, setPagesCount] = useState(1)
-  const [isLastPage, setIsLastPage] = useState(false)
+  const { pagesCount, isLastPage, loadNextPage, setLastPage, resetPages } = usePaging()
   const history = useHistory()
 
   useEffect(() => {
     history.replace(`/customers?${toUrlParams(searchValues)}`)
   }, [history, searchValues])
-
-  const resetPages = () => {
-    setPagesCount(1)
-    setIsLastPage(false)
-  }
 
   return <>
     <h2>
@@ -60,7 +54,7 @@ export default () => {
                       key={`page-${index}`}>
               <CustomersTablePage searchValues={searchValues}
                                   $page={index}
-                                  setIsLastPage={setIsLastPage}/>
+                                  setLastPage={setLastPage}/>
             </Suspense>
           )
       }
@@ -69,7 +63,7 @@ export default () => {
 
     <Button variant="outline-secondary"
             disabled={isLastPage}
-            onClick={() => setPagesCount(pagesCount + 1)}>
+            onClick={loadNextPage}>
       Load next
     </Button>
   </>
@@ -101,13 +95,13 @@ const CustomersSearchForm = ({ searchValues, setSearchValues, resetPages }) =>
     <AutoSubmit/>
   </FormikForm>
 
-const CustomersTablePage = ({ searchValues, $page, setIsLastPage }) => {
+const CustomersTablePage = ({ searchValues, $page, setLastPage }) => {
   const { data: customers, isValidating } = useCustomers(searchValues, $page)
   const history = useHistory()
 
   useEffect(() => {
     if (customers.length === 0) {
-      setIsLastPage(true)
+      setLastPage()
     }
   })
 
