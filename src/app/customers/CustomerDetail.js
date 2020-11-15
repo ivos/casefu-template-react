@@ -4,7 +4,7 @@ import { Card, Col, Form, Row } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
 import { CancelLink, EditButton, Revalidating, SavingButton, StaticGroup } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { patchCustomer, useCustomer } from '../../api'
+import { patchCustomer, useCustomer } from './customer-api'
 
 export default () => {
   const { id } = useParams()

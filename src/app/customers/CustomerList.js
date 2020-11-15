@@ -6,8 +6,8 @@ import { useMount } from 'react-use'
 import { sentenceCase } from 'change-case'
 import { AutoSubmit, FieldGroup, FormikForm, Revalidating } from '../../form'
 import { SkeletonTableRows } from '../../shared/Skeletons'
-import { useCustomers } from '../../api'
 import { onEnter, toUrlParams, usePaging, useUrlParams } from '../../shared/utils'
+import { useCustomers } from './customer-api'
 
 let searchValuesCache = { name: null, status: null }
 

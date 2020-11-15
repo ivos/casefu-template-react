@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import { useMountedState } from 'react-use'
 import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { updateCustomer, useCustomer } from '../../api'
+import { updateCustomer, useCustomer } from './customer-api'
 
 export default () => {
   const { id } = useParams()
