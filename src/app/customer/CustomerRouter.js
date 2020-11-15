@@ -1,8 +1,8 @@
 import React from 'react'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import CustomerCreate from './CustomerCreate'
-import CustomerDetail from './CustomerDetail'
 import CustomerEdit from './CustomerEdit'
+import CustomerDetail from './CustomerDetail'
 import CustomerList from './CustomerList'
 
 export default () => {

@@ -33,7 +33,9 @@ const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formi
       const errors = mapServerErrorCodeToLabel ?
         mapServerErrorCodesToLabels(mapServerErrorCodeToLabel, serverErrors) : serverErrors
       formikBag.setStatus(errors)
+      return
     }
+    throw error
   }
 }
 

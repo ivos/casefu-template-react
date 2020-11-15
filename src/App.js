@@ -4,7 +4,8 @@ import { Container } from 'react-bootstrap'
 import './App.css'
 import Header from './layout/Header'
 import Home from './layout/Home'
-import CustomerRouter from './app/customers/CustomerRouter'
+import CustomerRouter from './app/customer/CustomerRouter'
+import OrderRouter from './app/order/OrderRouter'
 
 export default () => (
   <Router>
@@ -13,6 +14,9 @@ export default () => (
       <Switch>
         <Route path="/customers">
           <CustomerRouter/>
+        </Route>
+        <Route path="/orders">
+          <OrderRouter/>
         </Route>
         <Route path="/">
           <Home/>
