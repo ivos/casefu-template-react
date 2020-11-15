@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import qs from 'qs'
 import { defaultPageSize } from '../../shared/constants'
-import { delay, get, nextId, update } from '../../api'
+import { defaultSWROptions, delay, editSWROptions, get, nextId, update } from '../../api'
 
 const customersPageSize = defaultPageSize
 const customers = []
@@ -30,9 +30,9 @@ const listCustomers = params => {
       .slice(page * customersPageSize, (page + 1) * customersPageSize)
   ).then(delay)
 }
-export const useCustomers = (params, $page = 0) =>
+export const useCustomers = (params, $page = 0, options = {}) =>
   useSWR(['/customers',
-    qs.stringify(params), $page], () => listCustomers({ ...params, $page }), { suspense: true })
+    qs.stringify(params), $page], () => listCustomers({ ...params, $page }), { ...defaultSWROptions, ...options })
 
 const getCustomer = id => {
   console.log('getCustomer', id)
@@ -40,8 +40,10 @@ const getCustomer = id => {
     get().customers.find(item => item.id === Number(id))
   ).then(delay)
 }
-export const useCustomer = id =>
-  useSWR(`/customers/${id}`, () => getCustomer(id), { suspense: true })
+export const useCustomer = (id, options = {}) =>
+  useSWR(`/customers/${id}`, () => getCustomer(id), { ...defaultSWROptions, ...options })
+export const useCustomerEdit = (id, options = {}) =>
+  useCustomer(id, { ...editSWROptions, ...options })
 
 export const createCustomer = values => {
   console.log('createCustomer', values)

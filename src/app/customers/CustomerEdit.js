@@ -5,7 +5,9 @@ import * as Yup from 'yup'
 import { useMountedState } from 'react-use'
 import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
-import { updateCustomer, useCustomer } from './customer-api'
+import { updateCustomer, useCustomerEdit } from './customer-api'
+
+const skeleton = <SkeletonForm rows={1}/>
 
 export default () => {
   const { id } = useParams()
@@ -21,7 +23,7 @@ export default () => {
             Customer
           </Card.Title>
 
-          <Suspense fallback={<SkeletonForm rows={1}/>}>
+          <Suspense fallback={skeleton}>
             <CustomerEditForm id={id}/>
           </Suspense>
         </Card.Body>
@@ -33,7 +35,7 @@ export default () => {
 const CustomerEditForm = ({ id }) => {
   const isMounted = useMountedState()
   const history = useHistory()
-  const { data: customer } = useCustomer(id)
+  const { data: customer, isValidating } = useCustomerEdit(id)
 
   const validationSchema =
     Yup.object({
@@ -45,6 +47,10 @@ const CustomerEditForm = ({ id }) => {
     if (isMounted()) {
       history.push(`/customers/${customer.id}`)
     }
+  }
+
+  if (isValidating) {
+    return skeleton
   }
 
   return (
