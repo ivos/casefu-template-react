@@ -1,16 +1,20 @@
 import React, { useState } from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
+import { useMountedState } from 'react-use'
 import { CancelLink, EditButton, Revalidating } from '../form'
 
 export default ({ id, useResource, buttons, children }) => {
   const { data, isValidating, revalidate } = useResource(id)
   const [isChanging, setIsChanging] = useState(false)
+  const isMounted = useMountedState()
 
   const action = async fn => {
     setIsChanging(true)
     await fn()
-    revalidate()
-    setIsChanging(false)
+    if (isMounted()) {
+      revalidate()
+      setIsChanging(false)
+    }
   }
 
   return <>
