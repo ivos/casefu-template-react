@@ -2,7 +2,7 @@ import React, { Suspense } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Card, Col, Form, Row } from 'react-bootstrap'
 import * as Yup from 'yup'
-import { useMountedState } from 'react-use'
+import { useFirstMountState, useMountedState } from 'react-use'
 import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
 import { SkeletonForm } from '../../shared/Skeletons'
 import { updateCustomer, useCustomerEdit } from './customer-api'
@@ -34,6 +34,7 @@ export default () => {
 
 const CustomerEditForm = ({ id }) => {
   const isMounted = useMountedState()
+  const isFirstMount = useFirstMountState()
   const history = useHistory()
   const { data: customer, isValidating } = useCustomerEdit(id)
 
@@ -49,7 +50,7 @@ const CustomerEditForm = ({ id }) => {
     }
   }
 
-  if (isValidating) {
+  if (isValidating || isFirstMount) {
     return skeleton
   }
 

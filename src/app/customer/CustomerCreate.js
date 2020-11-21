@@ -10,6 +10,7 @@ export default () =>
     title="Create customer"
     entityTitle="Customer"
     url="/customers"
+    rows={1}
     initialValues={{ name: '' }}
     validationSchema={
       Yup.object({

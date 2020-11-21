@@ -14,19 +14,20 @@ import {
 } from '../../api'
 
 const pageSize = defaultPageSize
-const customers = []
-const sort = customers => {
-  customers.sort((a, b) => a.name.localeCompare(b.name))
+const sort = data => {
+  data.sort((a, b) => a.name.localeCompare(b.name))
 }
+const generated = []
 Array.from(Array(500)).forEach((_, index) =>
-  customers.push({
+  generated.push({
     id: index + 1,
     version: 0,
     name: Math.random().toString(36).substring(2),
     status: 'active'
   }))
-sort(customers)
-update(data => ({ ...data, customers }))
+sort(generated)
+update(data => ({ ...data, customers: generated }))
+update(data => ({ ...data, customers: data.customers || [] }))
 
 const listCustomers = params => {
   console.log('listCustomers', params)

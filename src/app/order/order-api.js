@@ -14,20 +14,21 @@ import {
 } from '../../api'
 
 const pageSize = defaultPageSize
-const orders = []
-const sort = orders => {
-  orders.sort((a, b) => a.orderNumber.localeCompare(b.orderNumber))
+const sort = data => {
+  data.sort((a, b) => a.orderNumber.localeCompare(b.orderNumber))
 }
+// const generated = []
 // Array.from(Array(500)).forEach((_, index) =>
-//   orders.push({
+//   generated.push({
 //     id: index + 1,
 //     version: 0,
 //     orderNumber: Math.random().toString(36).substring(2),
 //     note: Math.random().toString(36).substring(2),
 //     status: 'created'
 //   }))
-// sort(orders)
-update(data => ({ ...data, orders }))
+// sort(generated)
+// update(data => ({ ...data, orders: generated }))
+update(data => ({ ...data, orders: data.orders || [] }))
 
 const listOrders = params => {
   console.log('listOrders', params)

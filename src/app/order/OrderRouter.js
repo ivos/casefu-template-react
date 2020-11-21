@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import OrderCreate from './OrderCreate'
 // import OrderEdit from './OrderEdit'
-// import OrderDetail from './OrderDetail'
+import OrderDetail from './OrderDetail'
 import OrderList from './OrderList'
 
 export default () => {
@@ -15,9 +15,9 @@ export default () => {
       {/*<Route path={`${match.path}/:id/edit`}>*/}
       {/*  <OrderEdit/>*/}
       {/*</Route>*/}
-      {/*<Route path={`${match.path}/:id`}>*/}
-      {/*  <OrderDetail/>*/}
-      {/*</Route>*/}
+      <Route path={`${match.path}/:id`}>
+        <OrderDetail/>
+      </Route>
       <Route path={match.path}>
         <OrderList/>
       </Route>

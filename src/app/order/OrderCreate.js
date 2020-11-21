@@ -10,6 +10,7 @@ export default () =>
     title="Create order"
     entityTitle="Order"
     url="/orders"
+    rows={2}
     initialValues={{ orderNumber: '', note: '' }}
     validationSchema={
       Yup.object({
