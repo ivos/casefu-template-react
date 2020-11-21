@@ -1,9 +1,19 @@
 import useSWR from 'swr'
 import qs from 'qs'
 import { defaultPageSize } from '../../shared/constants'
-import { defaultSWROptions, delay, editSWROptions, get, nextId, update } from '../../api'
+import {
+  caseInsensitiveMatch,
+  create,
+  defaultSWROptions,
+  editSWROptions,
+  exactMatch,
+  getEntity,
+  list,
+  modify,
+  update
+} from '../../api'
 
-const customersPageSize = defaultPageSize
+const pageSize = defaultPageSize
 const customers = []
 Array.from(Array(500)).forEach((_, index) =>
   customers.push({
@@ -12,23 +22,19 @@ Array.from(Array(500)).forEach((_, index) =>
     name: Math.random().toString(36).substring(2),
     status: 'active'
   }))
-const sortCustomers = customers => {
+const sort = customers => {
   customers.sort((a, b) => a.name.localeCompare(b.name))
 }
-sortCustomers(customers)
+sort(customers)
 update(data => ({ ...data, customers }))
 
 const listCustomers = params => {
   console.log('listCustomers', params)
-  const page = params.$page || 0
-  return Promise.resolve(
-    get().customers
-      .filter(item =>
-        (!params.name || (item.name && item.name.toLowerCase().indexOf(params.name.toLowerCase()) === 0)) &&
-        (!params.status || (item.status === params.status))
-      )
-      .slice(page * customersPageSize, (page + 1) * customersPageSize)
-  ).then(delay)
+  return list(params, pageSize, 'customers',
+    item =>
+      caseInsensitiveMatch(params, item, 'name') &&
+      exactMatch(params, item, 'status')
+  )
 }
 export const useCustomers = (params, $page = 0, options = {}) =>
   useSWR(['/customers',
@@ -36,9 +42,7 @@ export const useCustomers = (params, $page = 0, options = {}) =>
 
 const getCustomer = id => {
   console.log('getCustomer', id)
-  return Promise.resolve(
-    get().customers.find(item => item.id === Number(id))
-  ).then(delay)
+  return getEntity(id, 'customers')
 }
 export const useCustomer = (id, options = {}) =>
   useSWR(`/customers/${id}`, () => getCustomer(id), { ...defaultSWROptions, ...options })
@@ -47,40 +51,17 @@ export const useCustomerEdit = (id, options = {}) =>
 
 export const createCustomer = values => {
   console.log('createCustomer', values)
-  let id = undefined
-  update(data => {
-    id = nextId(data.customers)
-    data.customers.push({ ...values, status: 'active', id, version: 0 })
-    sortCustomers(data.customers)
-    return data
-  })
-  return Promise.resolve({ id }).then(delay)
-}
-
-const modifyCustomer = (id, version, modificationFn) => {
-  id = Number(id)
-  version = Number(version)
-  update(data => {
-    const index = data.customers.findIndex(item => item.id === id && item.version === version)
-    if (index < 0) {
-      throw new Error(`Customer with id ${id} and version ${version} not found.`)
-    }
-    version++
-    data.customers[index] = modificationFn(id, version, data.customers[index])
-    sortCustomers(data.customers)
-    return data
-  })
-  return Promise.resolve().then(delay)
+  return create({ ...values, status: 'active' }, 'customers', sort)
 }
 
 export const updateCustomer = (id, version, values) => {
   console.log('updateCustomer', id, version, values)
-  return modifyCustomer(id, version,
+  return modify(id, version, 'customers', sort,
     (id, version) => ({ ...values, id, version }))
 }
 
 export const patchCustomer = (id, version, values) => {
   console.log('patchCustomer', id, version, values)
-  return modifyCustomer(id, version,
+  return modify(id, version, 'customers', sort,
     (id, version, oldValues) => ({ ...oldValues, ...values, id, version }))
 }
