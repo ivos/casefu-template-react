@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card } from 'react-bootstrap'
+import { EditForm } from './index'
 import { SkeletonForm } from '../shared/Skeletons'
-import { DetailForm } from './'
 
-export default ({ title, entityTitle, rows, useResource, buttons, children }) => {
+export default ({ title, entityTitle, url, useResource, rows, validationSchema, update, children }) => {
   const { id } = useParams()
 
   return <>
@@ -18,11 +18,14 @@ export default ({ title, entityTitle, rows, useResource, buttons, children }) =>
         </Card.Title>
 
         <Suspense fallback={<SkeletonForm rows={rows}/>}>
-          <DetailForm id={id}
-                      useResource={useResource}
-                      buttons={buttons}>
+          <EditForm url={url}
+                    useResource={useResource}
+                    id={id}
+                    rows={rows}
+                    validationSchema={validationSchema}
+                    update={update}>
             {children}
-          </DetailForm>
+          </EditForm>
         </Suspense>
       </Card.Body>
     </Card>

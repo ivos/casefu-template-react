@@ -1,72 +1,25 @@
-import React, { Suspense } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
-import { Card, Col, Form, Row } from 'react-bootstrap'
+import React from 'react'
+import { Form } from 'react-bootstrap'
 import * as Yup from 'yup'
-import { useFirstMountState, useMountedState } from 'react-use'
-import { CancelLink, FieldGroup, FormikForm, SaveButton } from '../../form'
-import { SkeletonForm } from '../../shared/Skeletons'
+import { FieldGroup } from '../../form'
+import { EditScreen } from '../../screen'
 import { updateCustomer, useCustomerEdit } from './customer-api'
 
-const skeleton = <SkeletonForm rows={1}/>
-
-export default () => {
-  const { id } = useParams()
-
-  return (
-    <>
-      <h2>
-        Edit customer
-      </h2>
-      <Card>
-        <Card.Body>
-          <Card.Title>
-            Customer
-          </Card.Title>
-
-          <Suspense fallback={skeleton}>
-            <CustomerEditForm id={id}/>
-          </Suspense>
-        </Card.Body>
-      </Card>
-    </>
-  )
-}
-
-const CustomerEditForm = ({ id }) => {
-  const isMounted = useMountedState()
-  const isFirstMount = useFirstMountState()
-  const history = useHistory()
-  const { data: customer, isValidating } = useCustomerEdit(id)
-
-  const validationSchema =
-    Yup.object({
-      name: Yup.string()
-        .required()
-    })
-  const handleSubmit = async data => {
-    await updateCustomer(customer.id, customer.version, data)
-    if (isMounted()) {
-      history.push(`/customers/${customer.id}`)
+export default () =>
+  <EditScreen
+    title="Edit customer"
+    entityTitle="Customer"
+    url="/customers"
+    useResource={useCustomerEdit}
+    rows={1}
+    validationSchema={
+      Yup.object({
+        name: Yup.string()
+          .required()
+      })
     }
-  }
+    update={data => updateCustomer(data.id, data.version, data)}>
 
-  if (isValidating || isFirstMount) {
-    return skeleton
-  }
+    <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} required autoFocus/>
 
-  return (
-    <FormikForm initialValues={customer}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}>
-
-      <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} required autoFocus/>
-
-      <Form.Group as={Row}>
-        <Col sm={{ offset: 2, span: 9 }}>
-          <SaveButton/>
-          <CancelLink/>
-        </Col>
-      </Form.Group>
-    </FormikForm>
-  )
-}
+  </EditScreen>

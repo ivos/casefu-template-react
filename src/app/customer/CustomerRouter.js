@@ -7,7 +7,8 @@ import CustomerList from './CustomerList'
 
 export default () => {
   const match = useRouteMatch()
-  return (
+
+  return <>
     <Switch>
       <Route path={`${match.path}/new`}>
         <CustomerCreate/>
@@ -22,5 +23,5 @@ export default () => {
         <CustomerList/>
       </Route>
     </Switch>
-  )
+  </>
 }
