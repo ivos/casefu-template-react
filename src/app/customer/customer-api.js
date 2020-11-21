@@ -15,6 +15,9 @@ import {
 
 const pageSize = defaultPageSize
 const customers = []
+const sort = customers => {
+  customers.sort((a, b) => a.name.localeCompare(b.name))
+}
 Array.from(Array(500)).forEach((_, index) =>
   customers.push({
     id: index + 1,
@@ -22,9 +25,6 @@ Array.from(Array(500)).forEach((_, index) =>
     name: Math.random().toString(36).substring(2),
     status: 'active'
   }))
-const sort = customers => {
-  customers.sort((a, b) => a.name.localeCompare(b.name))
-}
 sort(customers)
 update(data => ({ ...data, customers }))
 

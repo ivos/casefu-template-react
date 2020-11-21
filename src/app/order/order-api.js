@@ -15,18 +15,18 @@ import {
 
 const pageSize = defaultPageSize
 const orders = []
-Array.from(Array(500)).forEach((_, index) =>
-  orders.push({
-    id: index + 1,
-    version: 0,
-    orderNumber: Math.random().toString(36).substring(2),
-    note: Math.random().toString(36).substring(2),
-    status: 'created'
-  }))
 const sort = orders => {
   orders.sort((a, b) => a.orderNumber.localeCompare(b.orderNumber))
 }
-sort(orders)
+// Array.from(Array(500)).forEach((_, index) =>
+//   orders.push({
+//     id: index + 1,
+//     version: 0,
+//     orderNumber: Math.random().toString(36).substring(2),
+//     note: Math.random().toString(36).substring(2),
+//     status: 'created'
+//   }))
+// sort(orders)
 update(data => ({ ...data, orders }))
 
 const listOrders = params => {
