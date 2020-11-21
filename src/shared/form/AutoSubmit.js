@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useDebounce } from 'react-use'
-import { typingDebounceDelay } from '../shared/constants'
+import { typingDebounceDelay } from '../../constants'
 
 export default () => {
   const { values, submitForm } = useFormikContext()

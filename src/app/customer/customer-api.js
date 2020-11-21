@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import qs from 'qs'
-import { defaultPageSize } from '../../shared/constants'
+import { defaultPageSize } from '../../constants'
 import {
   caseInsensitiveMatch,
   create,

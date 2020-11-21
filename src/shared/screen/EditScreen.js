@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card } from 'react-bootstrap'
-import { EditForm } from './index'
-import { SkeletonForm } from '../shared/Skeletons'
+import { EditForm } from '.'
+import { SkeletonForm } from '../form'
 
 export default ({ title, entityTitle, url, useResource, rows, validationSchema, update, children }) => {
   const { id } = useParams()

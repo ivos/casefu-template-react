@@ -2,8 +2,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Col, Form, Row } from 'react-bootstrap'
 import { useFirstMountState, useMountedState } from 'react-use'
-import { CancelLink, FormikForm, SaveButton } from '../form'
-import { SkeletonForm } from '../shared/Skeletons'
+import { CancelLink, FormikForm, SaveButton, SkeletonForm } from '../form'
 
 export default ({ url, useResource, id, rows, validationSchema, update, children }) => {
   const isMounted = useMountedState()

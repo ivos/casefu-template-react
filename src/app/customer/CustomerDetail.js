@@ -1,8 +1,7 @@
 import React from 'react'
 import { sentenceCase } from 'change-case'
-import { SavingButton, StaticGroup } from '../../form'
+import { DetailScreen, SavingButton, StaticGroup } from '../../shared'
 import { patchCustomer, useCustomer } from './customer-api'
-import { DetailScreen } from '../../screen'
 
 const patch = (data, patch, action) => async () => {
   await action(() => patchCustomer(data.id, data.version, patch))

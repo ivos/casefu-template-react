@@ -2,9 +2,9 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Button, Table } from 'react-bootstrap'
 import { useMount } from 'react-use'
-import { SkeletonTableRows } from '../shared/Skeletons'
-import { toUrlParams, usePaging, useUrlParams } from '../shared/utils'
-import { SearchForm, TablePage } from './'
+import { SkeletonTableRows } from '../form'
+import { SearchForm, TablePage } from '.'
+import { toUrlParams, usePaging, useUrlParams } from '../utils'
 
 export default (
   {

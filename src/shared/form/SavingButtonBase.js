@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { spinnerDelay } from '../shared/constants'
+import { spinnerDelay } from '../../constants'
 
 export default ({ saving, onClick, disabled, children, ...rest }) => {
   const [spinner, setSpinner] = useState(true)

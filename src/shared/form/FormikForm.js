@@ -1,8 +1,8 @@
 import React from 'react'
 import { Formik } from 'formik'
 import { Form } from 'react-bootstrap'
-import FocusError from './FocusError'
-import { isValidationError } from '../api'
+import { FocusError } from '.'
+import { isValidationError } from '../../api'
 
 const mapValues = (values, fn) =>
   Object.fromEntries(

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Revalidating } from '../form'
-import { onEnter } from '../shared/utils'
+import { onEnter } from '../utils'
 
 export default ({ searchValues, $page, setLastPage, url, useResource, children }) => {
   const { data, isValidating } = useResource(searchValues, $page)

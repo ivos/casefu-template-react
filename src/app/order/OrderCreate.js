@@ -1,8 +1,7 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import * as Yup from 'yup'
-import { FieldGroup } from '../../form'
-import { CreateScreen } from '../../screen'
+import { CreateScreen, FieldGroup } from '../../shared'
 import { createOrder } from './order-api'
 
 export default () =>

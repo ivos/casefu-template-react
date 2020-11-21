@@ -1,8 +1,7 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
-import { CreateButton, FieldGroup } from '../../form'
-import { ListScreen } from '../../screen'
+import { CreateButton, FieldGroup, ListScreen } from '../../shared'
 import { useOrders } from './order-api'
 
 let searchValuesCache = { orderNumber: null, status: null }

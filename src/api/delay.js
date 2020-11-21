@@ -1,4 +1,4 @@
-import { dataLoadingDelay } from '../shared/constants'
+import { dataLoadingDelay } from '../constants'
 
 export const delay = value =>
   new Promise(resolve =>

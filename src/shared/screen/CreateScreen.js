@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { Card } from 'react-bootstrap'
-import { SkeletonForm } from '../shared/Skeletons'
-import { CreateForm } from './index'
+import { SkeletonForm } from '../form'
+import { CreateForm } from '.'
 
 export default ({ title, entityTitle, url, rows, initialValues, validationSchema, create, children }) =>
   <>

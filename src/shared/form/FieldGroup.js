@@ -1,7 +1,6 @@
 import React from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
-import Field from './Field'
-import ErrorMessage from './ErrorMessage'
+import { ErrorMessage, Field } from '.'
 
 export default ({ name, id = name, label, placeholder = label, required, sm, ...rest }) =>
   <Form.Group as={Row} controlId={id}>
