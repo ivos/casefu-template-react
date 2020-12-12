@@ -1,5 +1,3 @@
-import { delay } from './delay'
-
 const localStorageKey = 'CaseFuGeneratorAppData'
 
 export const get = () => JSON.parse(window.localStorage.getItem(localStorageKey)) || {}
@@ -13,26 +11,32 @@ export const nextId = data => data.length
   ? data.map(({ id }) => id).sort((a, b) => b - a)[0] + 1
   : 1
 
-export const exactMatch = (params, item, name) =>
-  !params[name] || (item[name] === params[name])
+export const exactMatch = (params, entity, name) =>
+  !params[name] || (entity[name] === params[name])
 
-export const caseInsensitiveMatch = (params, item, name) =>
-  !params[name] || (item[name] && item[name].toLowerCase().indexOf(params[name].toLowerCase()) === 0)
+export const numberMatch = (params, entity, name) =>
+  params[name] === null || params[name] === undefined || (entity[name] === Number(params[name]))
+
+export const caseInsensitiveMatch = (params, entity, name) =>
+  !params[name] || (entity[name] && entity[name].toLowerCase().indexOf(params[name].toLowerCase()) === 0)
 
 export const list = (params, pageSize, key, filterFn) => {
   const page = params.$page || 0
-  return Promise.resolve(
-    get()[key]
-      .filter(filterFn)
-      .slice(page * pageSize, (page + 1) * pageSize)
-  ).then(delay)
+  return get()[key]
+    .filter(filterFn)
+    .slice(page * pageSize, (page + 1) * pageSize)
 }
 
 export const getEntity = (id, key) => {
-  return Promise.resolve(
-    get()[key]
-      .find(item => item.id === Number(id))
-  ).then(delay)
+  return get()[key]
+    .find(item => item.id === Number(id))
+}
+
+export const expand = (values, from, to, key) => {
+  const result = { ...values }
+  result[to] = getEntity(result[from], key)
+  delete result[from]
+  return result
 }
 
 export const create = (values, key, sort) => {
@@ -43,7 +47,7 @@ export const create = (values, key, sort) => {
     sort(data[key])
     return data
   })
-  return Promise.resolve({ id }).then(delay)
+  return { id }
 }
 
 export const modify = (id, version, key, sort, modificationFn) => {
@@ -59,5 +63,4 @@ export const modify = (id, version, key, sort, modificationFn) => {
     sort(data[key])
     return data
   })
-  return Promise.resolve().then(delay)
 }

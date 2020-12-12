@@ -1,6 +1,5 @@
 import React from 'react'
-import { Card } from 'react-bootstrap'
-import { AutoSubmit, FormikForm } from '../form'
+import { AutoSubmit, FormikForm } from '..'
 
 export default ({ searchValues, setSearchValues, setSearchValuesCache, resetPages, children }) =>
   <FormikForm initialValues={searchValues}
@@ -9,12 +8,7 @@ export default ({ searchValues, setSearchValues, setSearchValuesCache, resetPage
                 setSearchValues(values)
                 setSearchValuesCache && setSearchValuesCache(values)
               }}>
-
-    <Card className="mb-3">
-      <Card.Body>
-        {children}
-      </Card.Body>
-    </Card>
+    {children}
 
     <AutoSubmit/>
   </FormikForm>

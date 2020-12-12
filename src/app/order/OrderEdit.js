@@ -2,6 +2,7 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 import * as Yup from 'yup'
 import { EditScreen, FieldGroup } from '../../shared'
+import { CustomerSelect } from '../customer/CustomerSelects'
 import { updateOrder, useOrderEdit } from './order-api'
 
 export default () =>
@@ -10,10 +11,12 @@ export default () =>
     entityTitle="Order"
     url="/orders"
     useResource={useOrderEdit}
-    rows={2}
+    rows={3}
     validationSchema={
       Yup.object({
         orderNumber: Yup.string()
+          .required(),
+        customer: Yup.object()
           .required(),
         note: Yup.string()
       })
@@ -21,6 +24,7 @@ export default () =>
     update={data => updateOrder(data.id, data.version, data)}>
 
     <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} required autoFocus/>
+    <FieldGroup as={CustomerSelect} name="customer" label="Customer" sm={[2, 9]} required/>
     <FieldGroup as={Form.Control} name="note" label="Note" sm={[2, 9]}/>
 
   </EditScreen>

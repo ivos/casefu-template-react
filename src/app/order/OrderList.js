@@ -2,9 +2,10 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
 import { CreateButton, FieldGroup, ListScreen } from '../../shared'
-import { useOrders } from './order-api'
+import { CustomerSearchSelect } from '../customer/CustomerSelects'
+import { collapseOrder, restoreOrder, useOrders } from './order-api'
 
-let searchValuesCache = { orderNumber: null, status: null }
+let searchValuesCache = { orderNumber: '', customer: '', status: '' }
 
 export default () =>
   <ListScreen
@@ -18,9 +19,12 @@ export default () =>
       </>
     }
     useResource={useOrders}
+    collapse={collapseOrder}
+    restore={restoreOrder}
     searchFormContent={
       <>
         <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} autoFocus isValid={false}/>
+        <FieldGroup as={CustomerSearchSelect} name="customer" label="Customer" sm={[2, 9]} isValid={false}/>
         <FieldGroup name="status" label="Status" sm={[2, 9]} isValid={false}>
           {({ field }) =>
             <Form.Control as="select" {...field}>
@@ -33,10 +37,12 @@ export default () =>
         </FieldGroup>
       </>
     }
+    columns={4}
     tableHeader={
       <>
         <th>#</th>
         <th>Order number</th>
+        <th>Customer</th>
         <th>Status</th>
       </>
     }
@@ -44,6 +50,7 @@ export default () =>
       item => <>
         <td>{item.id}</td>
         <td>{item.orderNumber}</td>
+        <td>{item.customer?.name}</td>
         <td>{sentenceCase(item.status)}</td>
       </>
     }

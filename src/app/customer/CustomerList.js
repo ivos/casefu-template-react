@@ -32,6 +32,7 @@ export default () =>
         </FieldGroup>
       </>
     }
+    columns={3}
     tableHeader={
       <>
         <th>#</th>

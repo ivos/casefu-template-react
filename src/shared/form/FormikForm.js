@@ -3,18 +3,7 @@ import { Formik } from 'formik'
 import { Form } from 'react-bootstrap'
 import { FocusError } from '.'
 import { isValidationError } from '../../api'
-
-const mapValues = (values, fn) =>
-  Object.fromEntries(
-    Object.entries(values)
-      .map(([key, value]) => [key, fn(value)])
-  )
-
-const nullValuesToEmpty = values =>
-  mapValues(values, value => value === null || value === undefined ? '' : value)
-
-const emptyValuesToNulls = values =>
-  mapValues(values, value => value === '' ? null : value)
+import { emptyValuesToNulls, nullValuesToEmpty } from '../utils'
 
 const mapServerErrorCodesToLabels = (mapServerErrorCodeToLabel, serverErrors) => {
   return Object.fromEntries(

@@ -8,3 +8,6 @@ export const editSWROptions = {
   revalidateOnFocus: false, // do not change user-modified data on focus
   revalidateOnReconnect: false // do not change user-modified data on reconnect
 }
+
+export const optionalGet = (id, fn) =>
+  () => (id === undefined || id === null) ? Promise.resolve(null) : fn()

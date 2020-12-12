@@ -1,17 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import pickBy from 'lodash.pickby'
 import qs from 'qs'
+import { pascalCase } from 'change-case'
+
+export const identity = data => data
 
 export const onEnter = fn => event => event.key === 'Enter' && fn()
+
+const mapValues = (values, fn) =>
+  Object.fromEntries(
+    Object.entries(values)
+      .map(([key, value]) => [key, fn(value)])
+  )
+
+export const nullValuesToEmpty = values =>
+  mapValues(values, value => value === null || value === undefined ? '' : value)
+
+export const emptyValuesToNulls = values =>
+  mapValues(values, value => value === '' ? null : value)
 
 const urlParamsPredicate = value => (value !== undefined && value !== '' && value !== false && value !== null)
 export const toUrlParams = values => qs.stringify(pickBy(values, urlParamsPredicate))
 
-export const useUrlParams = defaultValues => ({
-  ...defaultValues,
-  ...qs.parse(useLocation().search.substring(1))
-})
+export const useUrlParams = () => ({ ...qs.parse(useLocation().search.substring(1)) })
 
 export const usePaging = () => {
   const [pagesCount, setPagesCount] = useState(1)
@@ -29,4 +41,42 @@ export const usePaging = () => {
   }
 
   return { pagesCount, isLastPage, loadNextPage, setLastPage, resetPages }
+}
+
+export const collapse = (entity, attributeDefs) => {
+  const result = { ...entity }
+  attributeDefs.forEach(([attribute, id]) => {
+    const value = entity[attribute]
+    result[`${attribute}${pascalCase(id)}`] = (typeof value === 'object' && value !== null) ? value[id] : null
+    delete result[attribute]
+  })
+  return result
+}
+
+export const restore = (entity, attributeDefs) => {
+  const result = { ...entity }
+  attributeDefs.forEach(([from, to, id]) => {
+    const value = entity[from]
+    if (value !== undefined) {
+      result[to] = { [id]: value }
+      delete result[from]
+    }
+  })
+  return result
+}
+
+export const useRestored = (urlParam, useGet) => {
+  const urlParams = useUrlParams()
+  const [isRestoring, setIsRestoring] = useState(true)
+
+  const id = isRestoring ? urlParams[urlParam] : null
+  const { data } = useGet(id)
+
+  useEffect(() => {
+    if (isRestoring) {
+      setIsRestoring(false)
+    }
+  }, [isRestoring, setIsRestoring])
+
+  return isRestoring ? data : null
 }

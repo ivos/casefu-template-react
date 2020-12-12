@@ -20,6 +20,7 @@ export default ({ url, initialValues, validationSchema, create, children }) => {
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}>
       {children}
+
       <Form.Group as={Row}>
         <Col sm={{ offset: 2, span: 9 }}>
           <SaveButton/>

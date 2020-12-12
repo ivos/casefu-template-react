@@ -1,6 +1,7 @@
 import React from 'react'
-import { sentenceCase } from 'change-case'
+import { Link } from 'react-router-dom'
 import { DetailScreen, SavingButton, StaticGroup } from '../../shared'
+import { sentenceCase } from 'change-case'
 import { patchOrder, useOrder } from './order-api'
 
 const patch = (data, patch, action) => async () => {
@@ -11,7 +12,7 @@ export default () =>
   <DetailScreen
     title="Order detail"
     entityTitle="Order"
-    rows={3}
+    rows={4}
     useResource={useOrder}
     buttons={
       (data, { isValidating, isChanging, action }) =>
@@ -36,6 +37,11 @@ export default () =>
     {data =>
       <>
         <StaticGroup label="Order number" sm={[2, 10]} value={data.orderNumber}/>
+        <StaticGroup label="Customer" sm={[2, 10]}>
+          <Link to={`/customers/${data.customer?.id}`}>
+            {data.customer?.name}
+          </Link>
+        </StaticGroup>
         <StaticGroup label="Status" sm={[2, 10]} value={sentenceCase(data.status)}/>
         <StaticGroup label="Note" sm={[2, 10]} value={data.note}/>
       </>

@@ -18,10 +18,10 @@ export default ({ name, ...rest }) => {
     }
   })
 
-  return (
+  return <>
     <Field name={name}
            isInvalid={isTouched && (error || serverError)}
            isValid={dirty && !error && !serverError}
            {...rest}/>
-  )
+  </>
 }

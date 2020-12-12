@@ -6,10 +6,10 @@ import App from './App'
 import * as serviceWorker from './serviceWorker'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheck, faPlus, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faChevronRight, faPlus, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faEdit as farEdit } from '@fortawesome/free-regular-svg-icons'
 
-library.add(faCheck, farEdit, faPlus, faSpinner, faTimes)
+library.add(faCheck, faChevronRight, farEdit, faPlus, faSpinner, faTimes)
 
 require('./i18n')
 

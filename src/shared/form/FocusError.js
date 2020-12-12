@@ -12,7 +12,8 @@ export default () => {
 
     if ((prevSubmitting && !isSubmitting && !isValid && errorFieldNames.length > 0) ||
       (isSubmitting && serverErrorFieldNames.length > 0)) {
-      const selector = `[name="${[...errorFieldNames, ...serverErrorFieldNames][0]}"]`
+      const firstErrorName = [...errorFieldNames, ...serverErrorFieldNames][0]
+      const selector = `[name="${firstErrorName}"], #field-${firstErrorName}`
       const errorElement = document.querySelector(selector)
       if (errorElement && errorElement.focus) {
         errorElement.focus()

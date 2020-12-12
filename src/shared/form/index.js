@@ -1,3 +1,4 @@
+export { default as AsyncSelect } from './AsyncSelect'
 export { default as AutoSubmit } from './AutoSubmit'
 export { default as CancelLink } from './CancelLink'
 export { default as CreateButton } from './CreateButton'
