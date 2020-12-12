@@ -1,8 +1,8 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import * as Yup from 'yup'
+import { CreateScreen, FieldGroup, TextArea } from '../../shared'
 import { CustomerSelect } from '../customer/CustomerSelects'
-import { CreateScreen, FieldGroup } from '../../shared'
 import { createOrder } from './order-api'
 
 export default () =>
@@ -25,6 +25,6 @@ export default () =>
 
     <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} required autoFocus/>
     <FieldGroup as={CustomerSelect} name="customer" label="Customer" sm={[2, 9]} required/>
-    <FieldGroup as={Form.Control} name="note" label="Note" sm={[2, 9]}/>
+    <FieldGroup as={TextArea} name="note" label="Note" sm={[2, 9]} rows={5}/>
 
   </CreateScreen>
