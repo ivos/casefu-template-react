@@ -3,7 +3,8 @@ import { Form } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
 import { CreateButton, FieldGroup, ListScreen } from '../../shared'
 import { CustomerSearchSelect } from '../customer/CustomerSelects'
-import { collapseOrder, restoreOrder, useOrders } from './order-api'
+import { orderFromApi, orderToApi, useOrders } from './order-api'
+import { formatDate, formatDateTime } from '../../i18n'
 
 let searchValuesCache = { orderNumber: '', customer: '', status: '' }
 
@@ -19,8 +20,8 @@ export default () =>
       </>
     }
     useResource={useOrders}
-    collapse={collapseOrder}
-    restore={restoreOrder}
+    toApi={orderToApi}
+    fromApi={orderFromApi}
     searchFormContent={
       <>
         <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} autoFocus isValid={false}/>
@@ -37,13 +38,15 @@ export default () =>
         </FieldGroup>
       </>
     }
-    columns={4}
+    columns={6}
     tableHeader={
       <>
         <th>#</th>
         <th>Order number</th>
         <th>Customer</th>
         <th>Status</th>
+        <th>Received</th>
+        <th>Delivery date</th>
       </>
     }
     tablePageContent={
@@ -52,6 +55,8 @@ export default () =>
         <td>{item.orderNumber}</td>
         <td>{item.customer?.name}</td>
         <td>{sentenceCase(item.status)}</td>
+        <td>{formatDateTime(item.received)}</td>
+        <td>{formatDate(item.deliveryDate)}</td>
       </>
     }
   />

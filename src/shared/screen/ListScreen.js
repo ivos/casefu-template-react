@@ -8,7 +8,7 @@ import { emptyValuesToNulls, identity, toUrlParams, usePaging, useUrlParams } fr
 export default (
   {
     searchValuesCache, setSearchValuesCache, title, url, useResource,
-    collapse = identity, restore = identity,
+    toApi = identity, fromApi = identity,
     searchFormContent, columns, tableHeader, tablePageContent
   }) => {
   const [searchValues, setSearchValues] = useState(searchValuesCache || {})
@@ -17,12 +17,12 @@ export default (
   const urlParams = useUrlParams()
 
   useMount(() => {
-    setSearchValues({ ...searchValues, ...restore(urlParams) })
+    setSearchValues({ ...searchValues, ...fromApi(urlParams) })
   })
 
   useEffect(() => {
-    history.replace(`${url}?${toUrlParams(collapse(searchValues))}`)
-  }, [history, url, searchValues, collapse])
+    history.replace(`${url}?${toUrlParams(toApi(searchValues))}`)
+  }, [history, url, searchValues, toApi])
 
   return <>
     <h2>
@@ -58,7 +58,7 @@ export default (
             .map((_, index) =>
               <Suspense fallback={<SkeletonTableRows columns={columns}/>}
                         key={`page-${index}`}>
-                <TablePage searchValues={emptyValuesToNulls(collapse(searchValues))}
+                <TablePage searchValues={emptyValuesToNulls(toApi(searchValues))}
                            $page={index}
                            setLastPage={setLastPage}
                            url={url}

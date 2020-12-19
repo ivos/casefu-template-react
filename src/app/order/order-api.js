@@ -16,7 +16,7 @@ import {
   optionalGet,
   update
 } from '../../api'
-import { collapse, restore } from '../../shared/utils'
+import { collapse, dateTimeFromApi, dateTimeToApi, dateToApi, restore } from '../../shared/utils'
 
 const pageSize = defaultPageSize
 const sort = data => {
@@ -40,10 +40,16 @@ const expandOrder = values => {
   return values
 }
 
-export const collapseOrder = values => collapse(values,
-  [['customer', 'id']])
-export const restoreOrder = values => restore(values,
-  [['customerId', 'customer', 'id']])
+export const orderToApi = values => {
+  values = dateTimeToApi('received', values)
+  values = dateToApi('deliveryDate', values)
+  return collapse(values, [['customer', 'id', 'customerId']])
+}
+export const orderFromApi = values => {
+  values = dateTimeFromApi('received', values)
+  values = dateTimeFromApi('deliveryDate', values)
+  return restore(values, [['customerId', 'customer', 'id']])
+}
 
 const listOrders = params => {
   const result = list(params, pageSize, 'orders',
@@ -51,7 +57,9 @@ const listOrders = params => {
       caseInsensitiveMatch(params, item, 'orderNumber') &&
       numberMatch(params, item, 'customerId') &&
       exactMatch(params, item, 'status')
-  ).map(expandOrder)
+  )
+    .map(expandOrder)
+    .map(orderFromApi)
   console.log('listOrders', params, '=>', result)
   return Promise.resolve(result).then(delay)
 }
@@ -60,7 +68,7 @@ export const useOrders = (params, $page = 0, options = {}) =>
     qs.stringify(params), $page], () => listOrders({ ...params, $page }), { ...defaultSWROptions, ...options })
 
 const getOrder = id => {
-  const result = expandOrder(getEntity(id, 'orders'))
+  const result = orderFromApi(expandOrder(getEntity(id, 'orders')))
   console.log('getOrder', id, '=>', result)
   return Promise.resolve(result).then(delay)
 }
@@ -70,14 +78,14 @@ export const useOrderEdit = (id, options = {}) =>
   useOrder(id, { ...editSWROptions, ...options })
 
 export const createOrder = values => {
-  const request = collapseOrder(values)
+  const request = orderToApi(values)
   const result = create({ ...request, status: 'created' }, 'orders', sort)
   console.log('createOrder', request, '=>', result)
   return Promise.resolve(result).then(delay)
 }
 
 export const updateOrder = (id, version, values) => {
-  const request = collapseOrder(values)
+  const request = orderToApi(values)
   console.log('updateOrder', id, version, request)
   modify(id, version, 'orders', sort,
     (id, version) => ({ ...request, id, version }))
@@ -85,8 +93,9 @@ export const updateOrder = (id, version, values) => {
 }
 
 export const patchOrder = (id, version, values) => {
-  console.log('patchOrder', id, version, values)
+  const request = orderToApi(values)
+  console.log('patchOrder', id, version, request)
   modify(id, version, 'orders', sort,
-    (id, version, oldValues) => ({ ...oldValues, ...values, id, version }))
+    (id, version, oldValues) => ({ ...oldValues, ...request, id, version }))
   return Promise.resolve().then(delay)
 }

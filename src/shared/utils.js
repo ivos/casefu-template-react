@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import pickBy from 'lodash.pickby'
 import qs from 'qs'
-import { pascalCase } from 'change-case'
+import { formatISO, parseISO } from 'date-fns'
 
 export const identity = data => data
 
@@ -45,10 +45,12 @@ export const usePaging = () => {
 
 export const collapse = (entity, attributeDefs) => {
   const result = { ...entity }
-  attributeDefs.forEach(([attribute, id]) => {
-    const value = entity[attribute]
-    result[`${attribute}${pascalCase(id)}`] = (typeof value === 'object' && value !== null) ? value[id] : null
-    delete result[attribute]
+  attributeDefs.forEach(([from, id, to]) => {
+    if (entity.hasOwnProperty(from)) {
+      const value = entity[from]
+      result[to] = (typeof value === 'object' && value !== null) ? value[id] : null
+      delete result[from]
+    }
   })
   return result
 }
@@ -56,14 +58,29 @@ export const collapse = (entity, attributeDefs) => {
 export const restore = (entity, attributeDefs) => {
   const result = { ...entity }
   attributeDefs.forEach(([from, to, id]) => {
-    const value = entity[from]
-    if (value !== undefined) {
+    if (entity.hasOwnProperty(from)) {
+      const value = entity[from]
       result[to] = { [id]: value }
       delete result[from]
     }
   })
   return result
 }
+
+export const dateToApi = (attribute, values) => ({
+  ...values,
+  [attribute]: values[attribute] ? formatISO(values[attribute], { representation: 'date' }) : null
+})
+
+export const dateTimeToApi = (attribute, values) => ({
+  ...values,
+  [attribute]: values[attribute] ? formatISO(values[attribute]) : null
+})
+
+export const dateTimeFromApi = (attribute, values) => ({
+  ...values,
+  [attribute]: values[attribute] ? parseISO(values[attribute]) : null
+})
 
 export const useRestored = (urlParam, useGet) => {
   const urlParams = useUrlParams()
