@@ -8,7 +8,7 @@ export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, .
   const selectRef = useRef(null)
   const isMounted = useMountedState()
 
-  const [{ value }, , { setValue }] = useField(rest)
+  const [{ value }, meta, { setValue, setTouched }] = useField(rest)
 
   const [isLoading, setIsLoading] = useState(false)
   const [options, setOptions] = useState([])
@@ -26,14 +26,15 @@ export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, .
     return data
   }, [searchFn, isMounted])
 
-  const handleOptionChange = useCallback(option => {
+  const handleOptionChange = useCallback(async option => {
     if (option === null) {
       option = ''
     }
     if (value !== option) {
-      setValue(option)
+      await setValue(option)
+      setTouched(true)
     }
-  }, [value, setValue])
+  }, [value, setValue, setTouched])
 
   const preload = async () => {
     const data = await searchFn('')
@@ -66,6 +67,15 @@ export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, .
             onInputChange={handleInputChange}
             onSearchChange={handleSearchChange}
             onOptionChange={handleOptionChange}
+            themeConfig={{
+              color: {
+                border: meta.error ? '#dc3545' : (meta.touched ? '#28a745' : '#ced4da')
+              },
+              control: {
+                boxShadowColor: meta.error ? '#dc354540' : (meta.touched ? '#28a74540' : '#007bff40'),
+                focusedBorderColor: meta.error ? '#dc3545' : (meta.touched ? '#28a745' : '#007bff')
+              }
+            }}
             {...rest}/>
   </>
 }

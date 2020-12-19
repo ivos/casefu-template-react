@@ -3,7 +3,7 @@ import { Field, useFormikContext } from 'formik'
 import { usePrevious } from 'react-use'
 
 export default ({ name, ...rest }) => {
-  const { dirty, touched, values, errors, status = {}, setStatus } = useFormikContext()
+  const { touched, values, errors, status = {}, setStatus } = useFormikContext()
   const isTouched = touched[name]
   const error = errors[name]
   const serverError = status[name]
@@ -18,10 +18,13 @@ export default ({ name, ...rest }) => {
     }
   })
 
+  const isInvalid = isTouched && (error || serverError)
+  const isValid = isTouched && !error && !serverError
+
   return <>
     <Field name={name}
-           isInvalid={isTouched && (error || serverError)}
-           isValid={dirty && !error && !serverError}
+           isInvalid={isInvalid}
+           isValid={isValid}
            {...rest}/>
   </>
 }

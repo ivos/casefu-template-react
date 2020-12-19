@@ -17,14 +17,14 @@ export default () =>
       Yup.object({
         orderNumber: Yup.string()
           .required(),
-        customer: Yup.object()
+        customer: Yup.object().nullable()
           .required(),
-        received: Yup.date()
-          .required().nullable()
+        received: Yup.date().nullable()
+          .required()
           .min(subDays(startOfToday(), 7))
           .max(addMinutes(new Date(), 1)),
-        deliveryDate: Yup.date()
-          .required().nullable()
+        deliveryDate: Yup.date().nullable()
+          .required()
           .min(startOfToday()),
         note: Yup.string()
       })
