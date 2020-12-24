@@ -2,10 +2,11 @@ import React from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { useField } from 'formik'
 import { Form } from 'react-bootstrap'
-import { defaultDatePickerLocaleName } from '../../i18n'
+import { defaultDatePickerLocale, defaultDatePickerLocaleName } from '../../i18n'
+import { isValid, parse } from 'date-fns'
 
-const Base = ({ value, ...rest }) => {
-  const [, meta, { setValue }] = useField(rest)
+const Base = ({ value, placeholder, dateFormat, ...rest }) => {
+  const [, meta, { setTouched, setValue }] = useField(rest)
 
   const handleChange = newValue => {
     if (value !== newValue) {
@@ -13,13 +14,26 @@ const Base = ({ value, ...rest }) => {
     }
   }
 
+  const handleOnBlur = async event => {
+    const { value } = event.target
+    const date = parse(value, dateFormat, new Date(), { locale: defaultDatePickerLocale })
+    if (isValid(date)) {
+      await setValue(date)
+      setTouched()
+    }
+  }
+
   return <>
     <div className={meta.error ? 'is-invalid' : ''}>
       <ReactDatePicker
+        dateFormat={dateFormat}
         {...rest}
         selected={(value !== null && value !== '') ? new Date(value) : null}
         onChange={handleChange}
         locale={defaultDatePickerLocaleName}
+        placeholderText={placeholder}
+        onBlur={handleOnBlur}
+        onSelect={setTouched}
       />
     </div>
   </>

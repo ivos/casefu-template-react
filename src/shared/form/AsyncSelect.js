@@ -32,7 +32,7 @@ export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, .
     }
     if (value !== option) {
       await setValue(option)
-      setTouched(true)
+      setTouched()
     }
   }, [value, setValue, setTouched])
 
