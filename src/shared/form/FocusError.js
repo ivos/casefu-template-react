@@ -8,7 +8,7 @@ export default () => {
 
   useEffect(() => {
     const errorFieldNames = Object.keys(errors)
-    const serverErrorFieldNames = Object.keys(status)
+    const serverErrorFieldNames = Object.keys(status.serverErrors)
 
     if ((prevSubmitting && !isSubmitting && !isValid && errorFieldNames.length > 0) ||
       (isSubmitting && serverErrorFieldNames.length > 0)) {

@@ -13,7 +13,7 @@ const mapServerErrorCodesToLabels = (mapServerErrorCodeToLabel, serverErrors) =>
 }
 
 const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formikBag) => {
-  formikBag.setStatus({})
+  formikBag.setStatus({ changed: {}, serverErrors: {} })
   try {
     return await onSubmit(emptyValuesToNulls(values), formikBag)
   } catch (error) {
@@ -21,7 +21,7 @@ const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formi
       const { errors: serverErrors } = error.response.data
       const errors = mapServerErrorCodeToLabel ?
         mapServerErrorCodesToLabels(mapServerErrorCodeToLabel, serverErrors) : serverErrors
-      formikBag.setStatus(errors)
+      formikBag.setStatus({ changed: {}, serverErrors: errors })
       return
     }
     throw error
@@ -31,7 +31,7 @@ const wrapSubmit = (onSubmit, mapServerErrorCodeToLabel) => async (values, formi
 export default ({ initialValues, onSubmit, mapServerErrorCodeToLabel, children, ...rest }) =>
   <Formik initialValues={nullValuesToEmpty(initialValues)}
           enableReinitialize={true}
-          initialStatus={{}}
+          initialStatus={{ changed: {}, serverErrors: {} }}
           onSubmit={wrapSubmit(onSubmit, mapServerErrorCodeToLabel)}
           {...rest}
   >

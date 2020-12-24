@@ -19,8 +19,8 @@ const Base = ({ value, placeholder, dateFormat, ...rest }) => {
     const date = parse(value, dateFormat, new Date(), { locale: defaultDatePickerLocale })
     if (isValid(date)) {
       await setValue(date)
-      setTouched()
     }
+    setTouched()
   }
 
   return <>
@@ -33,7 +33,6 @@ const Base = ({ value, placeholder, dateFormat, ...rest }) => {
         locale={defaultDatePickerLocaleName}
         placeholderText={placeholder}
         onBlur={handleOnBlur}
-        onSelect={setTouched}
       />
     </div>
   </>

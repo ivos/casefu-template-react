@@ -3,12 +3,14 @@ import { Select } from 'react-functional-select'
 import { useField } from 'formik'
 import { useMount, useMountedState } from 'react-use'
 import { typingDebounceDelay } from '../../constants'
+import { useFormField } from '../utils'
 
-export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, ...rest }) => {
+export default ({ name, searchFn, getOptionValue, getOptionLabel, id, restoredValue, ...rest }) => {
   const selectRef = useRef(null)
   const isMounted = useMountedState()
 
-  const [{ value }, meta, { setValue, setTouched }] = useField(rest)
+  const [{ value }, , { setValue, setTouched }] = useField({ name, ...rest })
+  const { isValid, isInvalid } = useFormField(name)
 
   const [isLoading, setIsLoading] = useState(false)
   const [options, setOptions] = useState([])
@@ -32,9 +34,8 @@ export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, .
     }
     if (value !== option) {
       await setValue(option)
-      setTouched()
     }
-  }, [value, setValue, setTouched])
+  }, [value, setValue])
 
   const preload = async () => {
     const data = await searchFn('')
@@ -67,15 +68,17 @@ export default ({ searchFn, getOptionValue, getOptionLabel, id, restoredValue, .
             onInputChange={handleInputChange}
             onSearchChange={handleSearchChange}
             onOptionChange={handleOptionChange}
+            onInputBlur={() => setTouched()}
             themeConfig={{
               color: {
-                border: meta.error ? '#dc3545' : (meta.touched ? '#28a745' : '#ced4da')
+                border: isInvalid ? '#dc3545' : (isValid ? '#28a745' : '#ced4da')
               },
               control: {
-                boxShadowColor: meta.error ? '#dc354540' : (meta.touched ? '#28a74540' : '#007bff40'),
-                focusedBorderColor: meta.error ? '#dc3545' : (meta.touched ? '#28a745' : '#007bff')
+                boxShadowColor: isInvalid ? '#dc354540' : (isValid ? '#28a74540' : '#007bff40'),
+                focusedBorderColor: isInvalid ? '#dc3545' : (isValid ? '#28a745' : '#007bff')
               }
             }}
+            name={name}
             {...rest}/>
   </>
 }

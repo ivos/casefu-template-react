@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom'
 import pickBy from 'lodash.pickby'
 import qs from 'qs'
 import { formatISO, parseISO } from 'date-fns'
+import { useFormikContext } from 'formik'
+import { usePrevious } from 'react-use'
 
 export const identity = data => data
 
@@ -96,4 +98,21 @@ export const useRestored = (urlParam, useGet) => {
   }, [isRestoring, setIsRestoring])
 
   return isRestoring ? data : null
+}
+
+export const useFormField = name => {
+  const { touched, values, errors, status, submitCount } = useFormikContext()
+  const blurred = touched[name]
+  const error = errors[name]
+  const serverError = status.serverErrors[name]
+  const value = values[name]
+  const submitted = submitCount > 0
+  const prevValue = usePrevious(value)
+  const changedValue = value !== prevValue && prevValue !== undefined
+  const changed = changedValue || status.changed[name]
+
+  const isValid = !!((changed || submitted) && !error && !serverError)
+  const isInvalid = !!(((changed && blurred) || submitted) && (error || serverError))
+
+  return { isValid, isInvalid, changedValue, serverError }
 }
