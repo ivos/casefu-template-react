@@ -7,9 +7,9 @@ export default ({ name, ...rest }) => {
   const error = errors[name]
   const serverError = status.serverErrors[name]
 
-  return (
+  return <>
     <Form.Control.Feedback type="invalid" {...rest}>
       {error || serverError}
     </Form.Control.Feedback>
-  )
+  </>
 }

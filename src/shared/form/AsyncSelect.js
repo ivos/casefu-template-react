@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Select } from 'react-functional-select'
+import { Form } from 'react-bootstrap'
 import { useField } from 'formik'
 import { useMount, useMountedState } from 'react-use'
 import { typingDebounceDelay } from '../../constants'
 import { useFormField } from '../utils'
 
-export default ({ name, searchFn, getOptionValue, getOptionLabel, id, restoredValue, ...rest }) => {
+const Base = ({ name, searchFn, getOptionValue, getOptionLabel, id, restoredValue, ...rest }) => {
   const selectRef = useRef(null)
   const isMounted = useMountedState()
 
@@ -55,30 +56,35 @@ export default ({ name, searchFn, getOptionValue, getOptionLabel, id, restoredVa
   })
 
   return <>
-    <Select ref={selectRef}
-            inputId={id}
-            async
-            isClearable
-            inputDelay={typingDebounceDelay}
-            options={options}
-            initialValue={value}
-            isLoading={isLoading}
-            getOptionValue={getOptionValue}
-            getOptionLabel={getOptionLabel}
-            onInputChange={handleInputChange}
-            onSearchChange={handleSearchChange}
-            onOptionChange={handleOptionChange}
-            onInputBlur={() => setTouched()}
-            themeConfig={{
-              color: {
-                border: isInvalid ? '#dc3545' : (isValid ? '#28a745' : '#ced4da')
-              },
-              control: {
-                boxShadowColor: isInvalid ? '#dc354540' : (isValid ? '#28a74540' : '#007bff40'),
-                focusedBorderColor: isInvalid ? '#dc3545' : (isValid ? '#28a745' : '#007bff')
-              }
-            }}
-            name={name}
-            {...rest}/>
+    <div className={isInvalid ? 'is-invalid' : ''}>
+      <Select ref={selectRef}
+              inputId={id}
+              async
+              isClearable
+              inputDelay={typingDebounceDelay}
+              options={options}
+              initialValue={value}
+              isLoading={isLoading}
+              getOptionValue={getOptionValue}
+              getOptionLabel={getOptionLabel}
+              onInputChange={handleInputChange}
+              onSearchChange={handleSearchChange}
+              onOptionChange={handleOptionChange}
+              onInputBlur={() => setTouched()}
+              themeConfig={{
+                color: {
+                  border: isInvalid ? '#dc3545' : (isValid ? '#28a745' : '#ced4da')
+                },
+                control: {
+                  boxShadowColor: isInvalid ? '#dc354540' : (isValid ? '#28a74540' : '#007bff40'),
+                  focusedBorderColor: isInvalid ? '#dc3545' : (isValid ? '#28a745' : '#007bff')
+                }
+              }}
+              name={name}
+              {...rest}/>
+    </div>
   </>
 }
+
+export default ({ ...props }) =>
+  <Form.Control as={Base} {...props}/>
