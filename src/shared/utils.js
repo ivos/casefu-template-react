@@ -45,44 +45,45 @@ export const usePaging = () => {
   return { pagesCount, isLastPage, loadNextPage, setLastPage, resetPages }
 }
 
-export const collapse = (entity, attributeDefs) => {
-  const result = { ...entity }
-  attributeDefs.forEach(([from, id, to]) => {
-    if (entity.hasOwnProperty(from)) {
-      const value = entity[from]
-      result[to] = (typeof value === 'object' && value !== null) ? value[id] : null
-      delete result[from]
-    }
-  })
-  return result
+export const collapse = (entity, from, id, to) => {
+  if (entity.hasOwnProperty(from)) {
+    const result = { ...entity }
+    const value = entity[from]
+    result[to] = (typeof value === 'object' && value !== null) ? value[id] : null
+    delete result[from]
+    return result
+  }
+  return entity
 }
 
-export const restore = (entity, attributeDefs) => {
-  const result = { ...entity }
-  attributeDefs.forEach(([from, to, id]) => {
-    if (entity.hasOwnProperty(from)) {
-      const value = entity[from]
-      result[to] = { [id]: value }
-      delete result[from]
-    }
-  })
-  return result
+export const restore = (entity, from, to, id) => {
+  if (entity.hasOwnProperty(from)) {
+    const result = { ...entity }
+    const value = entity[from]
+    result[to] = { [id]: value }
+    delete result[from]
+    return result
+  }
+  return entity
 }
 
-export const dateToApi = (attribute, values) => ({
-  ...values,
-  [attribute]: values[attribute] ? formatISO(values[attribute], { representation: 'date' }) : null
-})
+const transformAttributeValue = (attribute, values, fn) => {
+  if (values.hasOwnProperty(attribute)) {
+    return {
+      ...values,
+      [attribute]: values[attribute] ? fn(values[attribute]) : null
+    }
+  }
+  return values
+}
 
-export const dateTimeToApi = (attribute, values) => ({
-  ...values,
-  [attribute]: values[attribute] ? formatISO(values[attribute]) : null
-})
+export const dateToApi = (attribute, values) =>
+  transformAttributeValue(attribute, values, value => formatISO(value, { representation: 'date' }))
+export const dateTimeToApi = (attribute, values) =>
+  transformAttributeValue(attribute, values, value => formatISO(value))
 
-export const dateTimeFromApi = (attribute, values) => ({
-  ...values,
-  [attribute]: values[attribute] ? parseISO(values[attribute]) : null
-})
+export const temporalFromApi = (attribute, values) =>
+  transformAttributeValue(attribute, values, parseISO)
 
 export const useRestored = (urlParam, useGet) => {
   const urlParams = useUrlParams()

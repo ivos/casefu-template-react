@@ -6,20 +6,20 @@ import CustomerDetail from './CustomerDetail'
 import CustomerList from './CustomerList'
 
 export default () => {
-  const match = useRouteMatch()
+  const { path } = useRouteMatch()
 
   return <>
     <Switch>
-      <Route path={`${match.path}/new`}>
+      <Route path={`${path}/new`}>
         <CustomerCreate/>
       </Route>
-      <Route path={`${match.path}/:id/edit`}>
+      <Route path={`${path}/:id/edit`}>
         <CustomerEdit/>
       </Route>
-      <Route path={`${match.path}/:id`}>
+      <Route path={`${path}/:id`}>
         <CustomerDetail/>
       </Route>
-      <Route path={match.path}>
+      <Route path={path}>
         <CustomerList/>
       </Route>
     </Switch>

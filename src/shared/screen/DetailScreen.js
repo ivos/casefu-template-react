@@ -4,7 +4,7 @@ import { Card } from 'react-bootstrap'
 import { SkeletonForm } from '../form'
 import { DetailForm } from '.'
 
-export default ({ title, entityTitle, rows, useResource, buttons, children }) => {
+export default ({ title, entityTitle, rows, useResourceGet, buttons, children }) => {
   const { id } = useParams()
 
   return <>
@@ -19,7 +19,7 @@ export default ({ title, entityTitle, rows, useResource, buttons, children }) =>
 
         <Suspense fallback={<SkeletonForm rows={rows}/>}>
           <DetailForm id={id}
-                      useResource={useResource}
+                      useResourceGet={useResourceGet}
                       buttons={buttons}>
             {children}
           </DetailForm>

@@ -12,16 +12,17 @@ export default () =>
   <ListScreen
     searchValuesCache={searchValuesCache}
     setSearchValuesCache={values => searchValuesCache = values}
-    url="/orders"
     title={
       <>
         Orders
         <CreateButton to="/orders/new" title="Create new order..."/>
       </>
     }
-    useResource={useOrders}
+    url="/orders"
+    useResourceList={useOrders}
     toApi={orderToApi}
     fromApi={orderFromApi}
+    searchFormRows={3}
     searchFormContent={
       <>
         <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} autoFocus isValid={false}/>

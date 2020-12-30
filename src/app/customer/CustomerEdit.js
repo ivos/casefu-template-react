@@ -9,7 +9,7 @@ export default () =>
     title="Edit customer"
     entityTitle="Customer"
     url="/customers"
-    useResource={useCustomerEdit}
+    useResourceEdit={useCustomerEdit}
     rows={1}
     validationSchema={
       Yup.object({

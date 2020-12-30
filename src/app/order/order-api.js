@@ -16,12 +16,13 @@ import {
   optionalGet,
   update
 } from '../../api'
-import { collapse, dateTimeFromApi, dateTimeToApi, dateToApi, restore } from '../../shared/utils'
+import { collapse, dateTimeToApi, dateToApi, restore, temporalFromApi } from '../../shared/utils'
 
 const pageSize = defaultPageSize
 const sort = data => {
   data.sort((a, b) => a.orderNumber.localeCompare(b.orderNumber))
 }
+
 // const generated = []
 // Array.from(Array(500)).forEach((_, index) =>
 //   generated.push({
@@ -33,6 +34,7 @@ const sort = data => {
 //   }))
 // sort(generated)
 // update(data => ({ ...data, orders: generated }))
+
 update(data => ({ ...data, orders: data.orders || [] }))
 
 const expandOrder = values => {
@@ -43,12 +45,14 @@ const expandOrder = values => {
 export const orderToApi = values => {
   values = dateTimeToApi('received', values)
   values = dateToApi('deliveryDate', values)
-  return collapse(values, [['customer', 'id', 'customerId']])
+  values = collapse(values, 'customer', 'id', 'customerId')
+  return values
 }
 export const orderFromApi = values => {
-  values = dateTimeFromApi('received', values)
-  values = dateTimeFromApi('deliveryDate', values)
-  return restore(values, [['customerId', 'customer', 'id']])
+  values = temporalFromApi('received', values)
+  values = temporalFromApi('deliveryDate', values)
+  values = restore(values, 'customerId', 'customer', 'id')
+  return values
 }
 
 const listOrders = params => {

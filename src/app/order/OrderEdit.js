@@ -11,7 +11,7 @@ export default () =>
     title="Edit order"
     entityTitle="Order"
     url="/orders"
-    useResource={useOrderEdit}
+    useResourceEdit={useOrderEdit}
     rows={5}
     validationSchema={
       Yup.object({

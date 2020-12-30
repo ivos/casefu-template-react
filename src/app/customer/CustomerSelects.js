@@ -3,12 +3,12 @@ import { AsyncSelect } from '../../shared'
 import { listCustomers, useCustomer } from './customer-api'
 import { useRestored } from '../../shared/utils'
 
-export const CustomerSelect = ({ ...rest }) =>
+export const CustomerSelect = props =>
   <AsyncSelect searchFn={query => listCustomers({ name: query })}
                getOptionValue={option => option.id}
                getOptionLabel={option => option.name}
-               {...rest}/>
+               {...props}/>
 
-export const CustomerSearchSelect = ({ ...rest }) =>
+export const CustomerSearchSelect = props =>
   <CustomerSelect restoredValue={useRestored('customerId', useCustomer)}
-                  {...rest}/>
+                  {...props}/>

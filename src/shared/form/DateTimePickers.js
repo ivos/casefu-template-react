@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDatePicker from 'react-datepicker'
 import { useField } from 'formik'
 import { Form } from 'react-bootstrap'
-import { defaultDatePickerLocale, defaultDatePickerLocaleName } from '../../i18n'
+import { defaultDateFnsLocale } from '../../i18n'
 import { isValid as isDateValid, parse } from 'date-fns'
 import { useFormField } from '../utils'
 
@@ -18,7 +18,7 @@ const Base = ({ name, value, placeholder, dateFormat, ...rest }) => {
 
   const handleOnBlur = async event => {
     const { value } = event.target
-    const date = parse(value, dateFormat, new Date(), { locale: defaultDatePickerLocale })
+    const date = parse(value, dateFormat, new Date(), { locale: defaultDateFnsLocale })
     if (isDateValid(date)) {
       await setValue(date)
     }
@@ -31,9 +31,9 @@ const Base = ({ name, value, placeholder, dateFormat, ...rest }) => {
         dateFormat={dateFormat}
         name={name}
         {...rest}
-        selected={(value !== null && value !== '') ? new Date(value) : null}
+        selected={(value !== null && value !== undefined && value !== '') ? new Date(value) : null}
         onChange={handleChange}
-        locale={defaultDatePickerLocaleName}
+        locale={defaultDateFnsLocale}
         placeholderText={placeholder}
         onBlur={handleOnBlur}
       />

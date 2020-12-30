@@ -6,12 +6,13 @@ import { useMount, useMountedState } from 'react-use'
 import { typingDebounceDelay } from '../../constants'
 import { useFormField } from '../utils'
 
-const Base = ({ name, searchFn, getOptionValue, getOptionLabel, id, restoredValue, ...rest }) => {
+const Base = ({ id, name, isValidCustom, searchFn, getOptionValue, getOptionLabel, restoredValue, ...rest }) => {
   const selectRef = useRef(null)
   const isMounted = useMountedState()
 
   const [{ value }, , { setValue, setTouched }] = useField({ name, ...rest })
-  const { isValid, isInvalid } = useFormField(name)
+  const { isValid: isValidComputed, isInvalid } = useFormField(name)
+  const isValid = isValidCustom === undefined ? isValidComputed : isValidCustom
 
   const [isLoading, setIsLoading] = useState(false)
   const [options, setOptions] = useState([])
@@ -86,5 +87,7 @@ const Base = ({ name, searchFn, getOptionValue, getOptionLabel, id, restoredValu
   </>
 }
 
-export default ({ ...props }) =>
-  <Form.Control as={Base} {...props}/>
+export default ({ isValid, ...rest }) =>
+  <Form.Control as={Base}
+                isValidCustom={isValid}
+                {...rest}/>

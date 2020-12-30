@@ -6,8 +6,7 @@ import { registerLocale } from 'react-datepicker'
 registerLocale('de', de)
 registerLocale('cs', cs)
 // setDefaultLocale('cs') - bug in 'react-datepicker' when deleting the value
-export const defaultDatePickerLocale = cs
-export const defaultDatePickerLocaleName = 'cs'
+export const defaultDateFnsLocale = cs
 
 yupSetLocale({
   mixed: {
@@ -20,8 +19,8 @@ yupSetLocale({
 })
 
 export const formatTemporal = (value, formatStr) =>
-  format(value, formatStr, { locale: defaultDatePickerLocale })
+  format(value, formatStr, { locale: defaultDateFnsLocale })
 export const formatDate = value =>
-  value ? format(value, 'PP', { locale: defaultDatePickerLocale }) : null
+  value ? format(value, 'PP', { locale: defaultDateFnsLocale }) : null
 export const formatDateTime = value =>
-  value ? format(value, 'PPp', { locale: defaultDatePickerLocale }) : null
+  value ? format(value, 'PPp', { locale: defaultDateFnsLocale }) : null

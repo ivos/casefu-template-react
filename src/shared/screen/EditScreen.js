@@ -4,7 +4,7 @@ import { Card } from 'react-bootstrap'
 import { EditForm } from '.'
 import { SkeletonForm } from '../form'
 
-export default ({ title, entityTitle, url, useResource, rows, validationSchema, update, children }) => {
+export default ({ title, entityTitle, url, useResourceEdit, rows, validationSchema, update, children }) => {
   const { id } = useParams()
 
   return <>
@@ -19,7 +19,7 @@ export default ({ title, entityTitle, url, useResource, rows, validationSchema, 
 
         <Suspense fallback={<SkeletonForm rows={rows}/>}>
           <EditForm url={url}
-                    useResource={useResource}
+                    useResourceEdit={useResourceEdit}
                     id={id}
                     rows={rows}
                     validationSchema={validationSchema}

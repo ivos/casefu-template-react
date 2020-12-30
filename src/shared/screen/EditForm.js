@@ -4,11 +4,11 @@ import { Col, Form, Row } from 'react-bootstrap'
 import { useFirstMountState, useMountedState } from 'react-use'
 import { CancelLink, FormikForm, SaveButton, SkeletonForm } from '../form'
 
-export default ({ url, useResource, id, rows, validationSchema, update, children }) => {
+export default ({ url, useResourceEdit, id, rows, validationSchema, update, children }) => {
   const isMounted = useMountedState()
   const isFirstMount = useFirstMountState()
   const history = useHistory()
-  const { data, isValidating } = useResource(id)
+  const { data, isValidating } = useResourceEdit(id)
 
   const handleSubmit = async data => {
     await update(data)

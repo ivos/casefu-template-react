@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useDebounce } from 'react-use'
+import isDeepEqual from 'react-fast-compare'
 import { typingDebounceDelay } from '../../constants'
 
 export default () => {
   const { values, submitForm } = useFormikContext()
-  const [isInitialCall, setInitialCall] = useState(true)
-  // TODO useFirstMountState
+  const [prevValues, setPrevValues] = useState()
 
-  useDebounce(() => {
-      if (isInitialCall) { // skip on initial call
-        setInitialCall(false)
-      } else {
-        submitForm()
+  useDebounce(async () => {
+      if (!isDeepEqual(values, prevValues)) {
+        setPrevValues(values)
+        if (prevValues !== undefined) {
+          await submitForm()
+        }
       }
     },
     typingDebounceDelay,

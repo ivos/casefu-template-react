@@ -13,7 +13,7 @@ export const SkeletonTableRows = ({ columns }) => {
   const [show] = useTimeout(skeletonDelay)
 
   return show() && [...Array(defaultPageSize)]
-    .map((_, row) => (
+    .map((_, row) =>
       <tr key={row}>
         {
           [...Array(columns)]
@@ -24,5 +24,5 @@ export const SkeletonTableRows = ({ columns }) => {
             ))
         }
       </tr>
-    ))
+    )
 }

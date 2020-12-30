@@ -2,22 +2,25 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
 import { CreateButton, FieldGroup, ListScreen } from '../../shared'
-import { useCustomers } from './customer-api'
+import { customerFromApi, customerToApi, useCustomers } from './customer-api'
 
-let searchValuesCache = { name: null, status: null }
+let searchValuesCache = { name: '', status: '' }
 
 export default () =>
   <ListScreen
     searchValuesCache={searchValuesCache}
     setSearchValuesCache={values => searchValuesCache = values}
-    url="/customers"
     title={
       <>
         Customers
         <CreateButton to="/customers/new" title="Create new customer..."/>
       </>
     }
-    useResource={useCustomers}
+    url="/customers"
+    useResourceList={useCustomers}
+    toApi={customerToApi}
+    fromApi={customerFromApi}
+    searchFormRows={2}
     searchFormContent={
       <>
         <FieldGroup as={Form.Control} name="name" label="Name" sm={[2, 9]} autoFocus isValid={false}/>

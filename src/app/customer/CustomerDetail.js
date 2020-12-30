@@ -1,13 +1,10 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { DetailScreen, SavingButton, StaticGroup } from '../../shared'
+import { DetailScreen, EditButton, NavigationButton, SavingButton, StaticGroup } from '../../shared'
 import { sentenceCase } from 'change-case'
 import { patchCustomer, useCustomer } from './customer-api'
 
-const patch = (data, patch, action) => async () => {
-  await action(() => patchCustomer(data.id, data.version, patch))
+const patch = (data, patch, wrapAction) => async () => {
+  await wrapAction(() => patchCustomer(data.id, data.version, patch))
 }
 
 export default () =>
@@ -15,26 +12,25 @@ export default () =>
     title="Customer detail"
     entityTitle="Customer"
     rows={2}
-    useResource={useCustomer}
+    useResourceGet={useCustomer}
     buttons={
-      (data, { isValidating, isChanging, action }) =>
+      (data, { isValidating, isChanging, wrapAction }) =>
         <>
+          <EditButton className="mr-3" autoFocus/>
+
           <SavingButton variant="warning" className="mr-1"
                         disabled={isChanging || isValidating || data.status === 'active'}
-                        onClick={patch(data, { status: 'active' }, action)}>
+                        onClick={patch(data, { status: 'active' }, wrapAction)}>
             Active
           </SavingButton>
           <SavingButton variant="warning" className="mr-3"
                         disabled={isChanging || isValidating || data.status === 'disabled'}
-                        onClick={patch(data, { status: 'disabled' }, action)}>
+                        onClick={patch(data, { status: 'disabled' }, wrapAction)}>
             Disabled
           </SavingButton>
 
-          <Button variant="outline-secondary" className="mr-3"
-                  as={NavLink} to={`/orders?customerId=${data.id}`}>
-            Customers&nbsp;
-            <FontAwesomeIcon icon={'chevron-right'}/>
-          </Button>
+          <NavigationButton label="Customers" className="mr-3"
+                            to={`/orders?customerId=${data.id}`}/>
         </>
     }>
     {data =>

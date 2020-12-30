@@ -19,6 +19,7 @@ const pageSize = defaultPageSize
 const sort = data => {
   data.sort((a, b) => a.name.localeCompare(b.name))
 }
+
 // const generated = []
 // Array.from(Array(500)).forEach((_, index) =>
 //   generated.push({
@@ -29,7 +30,15 @@ const sort = data => {
 //   }))
 // sort(generated)
 // update(data => ({ ...data, customers: generated }))
+
 update(data => ({ ...data, customers: data.customers || [] }))
+
+export const customerToApi = values => {
+  return values
+}
+export const customerFromApi = values => {
+  return values
+}
 
 export const listCustomers = params => {
   const result = list(params, pageSize, 'customers',
@@ -37,6 +46,7 @@ export const listCustomers = params => {
       caseInsensitiveMatch(params, item, 'name') &&
       exactMatch(params, item, 'status')
   )
+    .map(customerFromApi)
   console.log('listCustomers', params, '=>', result)
   return Promise.resolve(result).then(delay)
 }
@@ -45,7 +55,7 @@ export const useCustomers = (params, $page = 0, options = {}) =>
     qs.stringify(params), $page], () => listCustomers({ ...params, $page }), { ...defaultSWROptions, ...options })
 
 const getCustomer = id => {
-  let result = getEntity(id, 'customers')
+  const result = customerFromApi(getEntity(id, 'customers'))
   console.log('getCustomer', id, '=>', result)
   return Promise.resolve(result).then(delay)
 }
@@ -55,21 +65,24 @@ export const useCustomerEdit = (id, options = {}) =>
   useCustomer(id, { ...editSWROptions, ...options })
 
 export const createCustomer = values => {
-  const result = create({ ...values, status: 'active' }, 'customers', sort)
-  console.log('createCustomer', values, '=>', result)
+  const request = customerToApi(values)
+  const result = create({ ...request, status: 'active' }, 'customers', sort)
+  console.log('createCustomer', request, '=>', result)
   return Promise.resolve(result).then(delay)
 }
 
 export const updateCustomer = (id, version, values) => {
-  console.log('updateCustomer', id, version, values)
+  const request = customerToApi(values)
+  console.log('updateCustomer', id, version, request)
   modify(id, version, 'customers', sort,
-    (id, version) => ({ ...values, id, version }))
+    (id, version) => ({ ...request, id, version }))
   return Promise.resolve().then(delay)
 }
 
 export const patchCustomer = (id, version, values) => {
-  console.log('patchCustomer', id, version, values)
+  const request = customerToApi(values)
+  console.log('patchCustomer', id, version, request)
   modify(id, version, 'customers', sort,
-    (id, version, oldValues) => ({ ...oldValues, ...values, id, version }))
+    (id, version, oldValues) => ({ ...oldValues, ...request, id, version }))
   return Promise.resolve().then(delay)
 }

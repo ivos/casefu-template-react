@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { DetailScreen, SavingButton, StaticGroup } from '../../shared'
+import { DetailScreen, EditButton, SavingButton, StaticGroup } from '../../shared'
 import { sentenceCase } from 'change-case'
 import { patchOrder, useOrder } from './order-api'
 import { formatDate, formatDateTime } from '../../i18n'
 
-const patch = (data, patch, action) => async () => {
-  await action(() => patchOrder(data.id, data.version, patch))
+const patch = (data, patch, wrapAction) => async () => {
+  await wrapAction(() => patchOrder(data.id, data.version, patch))
 }
 
 export default () =>
@@ -14,23 +14,25 @@ export default () =>
     title="Order detail"
     entityTitle="Order"
     rows={6}
-    useResource={useOrder}
+    useResourceGet={useOrder}
     buttons={
-      (data, { isValidating, isChanging, action }) =>
+      (data, { isValidating, isChanging, wrapAction }) =>
         <>
+          <EditButton className="mr-3" autoFocus/>
+
           <SavingButton variant="warning" className="mr-1"
                         disabled={isChanging || isValidating || data.status === 'created'}
-                        onClick={patch(data, { status: 'created' }, action)}>
+                        onClick={patch(data, { status: 'created' }, wrapAction)}>
             Created
           </SavingButton>
           <SavingButton variant="warning" className="mr-1"
                         disabled={isChanging || isValidating || data.status === 'submitted'}
-                        onClick={patch(data, { status: 'submitted' }, action)}>
+                        onClick={patch(data, { status: 'submitted' }, wrapAction)}>
             Submitted
           </SavingButton>
           <SavingButton variant="warning" className="mr-1"
                         disabled={isChanging || isValidating || data.status === 'delivered'}
-                        onClick={patch(data, { status: 'delivered' }, action)}>
+                        onClick={patch(data, { status: 'delivered' }, wrapAction)}>
             Delivered
           </SavingButton>
         </>

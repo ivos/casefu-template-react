@@ -7,9 +7,10 @@ import { emptyValuesToNulls, identity, toUrlParams, usePaging, useUrlParams } fr
 
 export default (
   {
-    searchValuesCache, setSearchValuesCache, title, url, useResource,
-    toApi = identity, fromApi = identity,
-    searchFormContent, columns, tableHeader, tablePageContent
+    searchValuesCache, setSearchValuesCache,
+    title, url, useResourceList, toApi = identity, fromApi = identity,
+    searchFormRows, searchFormContent,
+    columns, tableHeader, tablePageContent
   }) => {
   const [searchValues, setSearchValues] = useState(searchValuesCache || {})
   const { pagesCount, isLastPage, loadNextPage, setLastPage, resetPages } = usePaging()
@@ -31,7 +32,7 @@ export default (
     <Suspense fallback={
       <Card className="mb-3">
         <Card.Body>
-          <SkeletonForm rows={3}/>
+          <SkeletonForm rows={searchFormRows}/>
         </Card.Body>
       </Card>
     }>
@@ -62,7 +63,7 @@ export default (
                            $page={index}
                            setLastPage={setLastPage}
                            url={url}
-                           useResource={useResource}
+                           useResourceList={useResourceList}
                            children={tablePageContent}/>
               </Suspense>
             )
@@ -73,7 +74,7 @@ export default (
       <Button variant="outline-secondary"
               disabled={isLastPage}
               onClick={loadNextPage}>
-        Load next
+        Load next&hellip;
       </Button>
     </Suspense>
   </>

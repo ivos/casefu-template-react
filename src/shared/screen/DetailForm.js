@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
 import { useMountedState } from 'react-use'
-import { CancelLink, EditButton, Revalidating } from '../form'
+import { CancelLink, Revalidating } from '../form'
 
-export default ({ id, useResource, buttons, children }) => {
-  const { data, isValidating, revalidate } = useResource(id)
+export default ({ id, useResourceGet, buttons, children }) => {
+  const { data, isValidating, revalidate } = useResourceGet(id)
   const [isChanging, setIsChanging] = useState(false)
   const isMounted = useMountedState()
 
-  const action = async fn => {
+  const wrapAction = async fn => {
     setIsChanging(true)
     await fn()
     if (isMounted()) {
@@ -26,9 +26,7 @@ export default ({ id, useResource, buttons, children }) => {
 
       <Form.Group as={Row}>
         <Col sm={{ offset: 2, span: 9 }}>
-          <EditButton className="mr-3" autoFocus/>
-
-          {buttons(data, { isValidating, isChanging, action })}
+          {buttons(data, { isValidating, isChanging, wrapAction })}
 
           <CancelLink/>
         </Col>
