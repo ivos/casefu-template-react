@@ -7,7 +7,7 @@ import Home from './layout/Home'
 import CustomerRouter from './app/customer/CustomerRouter'
 import OrderRouter from './app/order/OrderRouter'
 
-export default () => (
+export default () =>
   <Router>
     <Header/>
     <Container id="app-container" fluid>
@@ -24,4 +24,3 @@ export default () => (
       </Switch>
     </Container>
   </Router>
-)

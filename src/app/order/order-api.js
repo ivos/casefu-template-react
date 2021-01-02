@@ -2,6 +2,8 @@ import useSWR from 'swr'
 import qs from 'qs'
 import { defaultPageSize } from '../../constants'
 import {
+  atLeast,
+  atMost,
   caseInsensitiveMatch,
   create,
   defaultSWROptions,
@@ -44,13 +46,21 @@ const expandOrder = values => {
 
 export const orderToApi = values => {
   values = dateTimeToApi('received', values)
+  values = dateTimeToApi('receivedFrom', values)
+  values = dateTimeToApi('receivedTo', values)
   values = dateToApi('deliveryDate', values)
+  values = dateToApi('deliveryDateFrom', values)
+  values = dateToApi('deliveryDateTo', values)
   values = collapse(values, 'customer', 'id', 'customerId')
   return values
 }
 export const orderFromApi = values => {
   values = temporalFromApi('received', values)
+  values = temporalFromApi('receivedFrom', values)
+  values = temporalFromApi('receivedTo', values)
   values = temporalFromApi('deliveryDate', values)
+  values = temporalFromApi('deliveryDateFrom', values)
+  values = temporalFromApi('deliveryDateTo', values)
   values = restore(values, 'customerId', 'customer', 'id')
   return values
 }
@@ -60,6 +70,10 @@ const listOrders = params => {
     item =>
       caseInsensitiveMatch(params, item, 'orderNumber') &&
       numberMatch(params, item, 'customerId') &&
+      atLeast(params, 'receivedFrom', item, 'received') &&
+      atMost(params, 'receivedTo', item, 'received') &&
+      atLeast(params, 'deliveryDateFrom', item, 'deliveryDate') &&
+      atMost(params, 'deliveryDateTo', item, 'deliveryDate') &&
       exactMatch(params, item, 'status')
   )
     .map(expandOrder)

@@ -1,12 +1,18 @@
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
-import { CreateButton, FieldGroup, ListScreen } from '../../shared'
+import { CreateButton, DateRangePicker, DateTimeRangePicker, FieldGroup, ListScreen } from '../../shared'
 import { CustomerSearchSelect } from '../customer/CustomerSelects'
 import { orderFromApi, orderToApi, useOrders } from './order-api'
 import { formatDate, formatDateTime } from '../../i18n'
 
-let searchValuesCache = { orderNumber: '', customer: '', status: '' }
+let searchValuesCache = {
+  orderNumber: '',
+  customer: '',
+  deliveryDateFrom: '',
+  deliveryDateTo: '',
+  status: ''
+}
 
 export default () =>
   <ListScreen
@@ -27,6 +33,8 @@ export default () =>
       <>
         <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} autoFocus isValid={false}/>
         <FieldGroup as={CustomerSearchSelect} name="customer" label="Customer" sm={[2, 9]} isValid={false}/>
+        <FieldGroup as={DateTimeRangePicker} name="received" label="Received" sm={[2, 9]} isValid={false}/>
+        <FieldGroup as={DateRangePicker} name="deliveryDate" label="Delivery date" sm={[2, 9]} isValid={false}/>
         <FieldGroup name="status" label="Status" sm={[2, 9]} isValid={false}>
           {({ field }) =>
             <Form.Control as="select" {...field}>
