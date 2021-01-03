@@ -68,13 +68,15 @@ export const orderFromApi = values => {
 const listOrders = params => {
   const result = list(params, pageSize, 'orders',
     item =>
+      numberMatch(params, item, 'id') &&
       caseInsensitiveMatch(params, item, 'orderNumber') &&
       numberMatch(params, item, 'customerId') &&
+      exactMatch(params, item, 'status') &&
       atLeast(params, 'receivedFrom', item, 'received') &&
       atMost(params, 'receivedTo', item, 'received') &&
       atLeast(params, 'deliveryDateFrom', item, 'deliveryDate') &&
       atMost(params, 'deliveryDateTo', item, 'deliveryDate') &&
-      exactMatch(params, item, 'status')
+      caseInsensitiveMatch(params, item, 'note')
   )
     .map(expandOrder)
     .map(orderFromApi)

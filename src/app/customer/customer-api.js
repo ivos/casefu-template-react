@@ -11,6 +11,7 @@ import {
   getEntity,
   list,
   modify,
+  numberMatch,
   optionalGet,
   update
 } from '../../api'
@@ -43,6 +44,7 @@ export const customerFromApi = values => {
 export const listCustomers = params => {
   const result = list(params, pageSize, 'customers',
     item =>
+      numberMatch(params, item, 'id') &&
       caseInsensitiveMatch(params, item, 'name') &&
       exactMatch(params, item, 'status')
   )

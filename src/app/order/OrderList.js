@@ -3,15 +3,20 @@ import { Form } from 'react-bootstrap'
 import { sentenceCase } from 'change-case'
 import { CreateButton, DateRangePicker, DateTimeRangePicker, FieldGroup, ListScreen } from '../../shared'
 import { CustomerSearchSelect } from '../customer/CustomerSelects'
+import OrderStatusSelect from './OrderStatusSelect'
 import { orderFromApi, orderToApi, useOrders } from './order-api'
 import { formatDate, formatDateTime } from '../../i18n'
 
 let searchValuesCache = {
+  id: '',
   orderNumber: '',
   customer: '',
+  status: '',
+  receivedFrom: '',
+  receivedTo: '',
   deliveryDateFrom: '',
   deliveryDateTo: '',
-  status: ''
+  note: ''
 }
 
 export default () =>
@@ -31,31 +36,25 @@ export default () =>
     searchFormRows={3}
     searchFormContent={
       <>
-        <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} autoFocus isValid={false}/>
+        <FieldGroup as={Form.Control} name="id" label="Id" sm={[2, 9]} isValid={false}/>
+        <FieldGroup as={Form.Control} name="orderNumber" label="Order number" sm={[2, 9]} isValid={false}/>
         <FieldGroup as={CustomerSearchSelect} name="customer" label="Customer" sm={[2, 9]} isValid={false}/>
+        <FieldGroup as={OrderStatusSelect} name="status" label="Status" sm={[2, 9]} isValid={false}/>
         <FieldGroup as={DateTimeRangePicker} name="received" label="Received" sm={[2, 9]} isValid={false}/>
         <FieldGroup as={DateRangePicker} name="deliveryDate" label="Delivery date" sm={[2, 9]} isValid={false}/>
-        <FieldGroup name="status" label="Status" sm={[2, 9]} isValid={false}>
-          {({ field }) =>
-            <Form.Control as="select" {...field}>
-              <option/>
-              <option value="created">Created</option>
-              <option value="submitted">Submitted</option>
-              <option value="delivered">Delivered</option>
-            </Form.Control>
-          }
-        </FieldGroup>
+        <FieldGroup as={Form.Control} name="note" label="Note" sm={[2, 9]} isValid={false}/>
       </>
     }
-    columns={6}
+    columns={7}
     tableHeader={
       <>
-        <th>#</th>
+        <th>Id</th>
         <th>Order number</th>
         <th>Customer</th>
         <th>Status</th>
         <th>Received</th>
         <th>Delivery date</th>
+        <th>Note</th>
       </>
     }
     tablePageContent={
@@ -66,6 +65,7 @@ export default () =>
         <td>{sentenceCase(item.status)}</td>
         <td>{formatDateTime(item.received)}</td>
         <td>{formatDate(item.deliveryDate)}</td>
+        <td>{item.note}</td>
       </>
     }
   />
