@@ -99,7 +99,10 @@ export const useOrderEdit = (id, options = {}) =>
 
 export const createOrder = values => {
   const request = orderToApi(values)
-  const result = create({ ...request, status: 'created' }, 'orders', sort)
+  const result = create({
+    ...request,
+    status: 'created'
+  }, 'orders', sort)
   console.log('createOrder', request, '=>', result)
   return Promise.resolve(result).then(delay)
 }

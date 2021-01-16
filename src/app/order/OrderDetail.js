@@ -21,17 +21,17 @@ export default () =>
           <EditButton className="mr-3" autoFocus/>
 
           <SavingButton variant="warning" className="mr-1"
-                        disabled={isChanging || isValidating || data.status === 'created'}
+                        disabled={isChanging || isValidating || ['created'].includes(data.status)}
                         onClick={patch(data, { status: 'created' }, wrapAction)}>
             Created
           </SavingButton>
           <SavingButton variant="warning" className="mr-1"
-                        disabled={isChanging || isValidating || data.status === 'submitted'}
+                        disabled={isChanging || isValidating || ['submitted'].includes(data.status)}
                         onClick={patch(data, { status: 'submitted' }, wrapAction)}>
             Submitted
           </SavingButton>
           <SavingButton variant="warning" className="mr-1"
-                        disabled={isChanging || isValidating || data.status === 'delivered'}
+                        disabled={isChanging || isValidating || ['delivered'].includes(data.status)}
                         onClick={patch(data, { status: 'delivered' }, wrapAction)}>
             Delivered
           </SavingButton>

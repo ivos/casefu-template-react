@@ -10,7 +10,9 @@ export default () =>
     entityTitle="Customer"
     url="/customers"
     rows={1}
-    initialValues={{ name: '' }}
+    initialValues={{
+      name: ''
+    }}
     validationSchema={
       Yup.object({
         name: Yup.string()

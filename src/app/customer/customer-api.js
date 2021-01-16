@@ -34,6 +34,10 @@ const sort = data => {
 
 update(data => ({ ...data, customers: data.customers || [] }))
 
+const expandCustomer = values => {
+  return values
+}
+
 export const customerToApi = values => {
   return values
 }
@@ -48,6 +52,7 @@ export const listCustomers = params => {
       caseInsensitiveMatch(params, item, 'name') &&
       exactMatch(params, item, 'status')
   )
+    .map(expandCustomer)
     .map(customerFromApi)
   console.log('listCustomers', params, '=>', result)
   return Promise.resolve(result).then(delay)
@@ -57,7 +62,7 @@ export const useCustomers = (params, $page = 0, options = {}) =>
     qs.stringify(params), $page], () => listCustomers({ ...params, $page }), { ...defaultSWROptions, ...options })
 
 const getCustomer = id => {
-  const result = customerFromApi(getEntity(id, 'customers'))
+  const result = customerFromApi(expandCustomer(getEntity(id, 'customers')))
   console.log('getCustomer', id, '=>', result)
   return Promise.resolve(result).then(delay)
 }
@@ -68,7 +73,10 @@ export const useCustomerEdit = (id, options = {}) =>
 
 export const createCustomer = values => {
   const request = customerToApi(values)
-  const result = create({ ...request, status: 'active' }, 'customers', sort)
+  const result = create({
+    ...request,
+    status: 'active'
+  }, 'customers', sort)
   console.log('createCustomer', request, '=>', result)
   return Promise.resolve(result).then(delay)
 }

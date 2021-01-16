@@ -9,6 +9,7 @@ export const CustomerSelect = props =>
                getOptionLabel={option => option.name}
                {...props}/>
 
-export const CustomerSearchSelect = props =>
-  <CustomerSelect restoredValue={useRestored('customerId', useCustomer)}
-                  {...props}/>
+export const CustomerSearchSelect = ({ name, ...rest }) =>
+  <CustomerSelect restoredValue={useRestored(name + 'Id', useCustomer)}
+                  name={name}
+                  {...rest}/>

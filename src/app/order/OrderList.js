@@ -33,7 +33,7 @@ export default () =>
     useResourceList={useOrders}
     toApi={orderToApi}
     fromApi={orderFromApi}
-    searchFormRows={3}
+    searchFormRows={7}
     searchFormContent={
       <>
         <FieldGroup as={Form.Control} name="id" label="Id" sm={[2, 9]} isValid={false}/>

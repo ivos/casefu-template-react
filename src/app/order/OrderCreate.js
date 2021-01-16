@@ -12,7 +12,13 @@ export default () =>
     entityTitle="Order"
     url="/orders"
     rows={5}
-    initialValues={{ orderNumber: '', customer: '', received: '', deliveryDate: '', note: '' }}
+    initialValues={{
+      orderNumber: '',
+      customer: '',
+      received: '',
+      deliveryDate: '',
+      note: ''
+    }}
     validationSchema={
       Yup.object({
         orderNumber: Yup.string()

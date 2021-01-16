@@ -19,17 +19,17 @@ export default () =>
           <EditButton className="mr-3" autoFocus/>
 
           <SavingButton variant="warning" className="mr-1"
-                        disabled={isChanging || isValidating || data.status === 'active'}
+                        disabled={isChanging || isValidating || ['active'].includes(data.status)}
                         onClick={patch(data, { status: 'active' }, wrapAction)}>
             Active
           </SavingButton>
           <SavingButton variant="warning" className="mr-3"
-                        disabled={isChanging || isValidating || data.status === 'disabled'}
+                        disabled={isChanging || isValidating || ['disabled'].includes(data.status)}
                         onClick={patch(data, { status: 'disabled' }, wrapAction)}>
             Disabled
           </SavingButton>
 
-          <NavigationButton label="Customers" className="mr-3"
+          <NavigationButton label="Customer orders" className="mr-3"
                             to={`/orders?customerId=${data.id}`}/>
         </>
     }>

@@ -46,7 +46,7 @@ export const expand = (values, from, to, key) => {
 }
 
 export const create = (values, key, sort) => {
-  let id = undefined
+  let id
   update(data => {
     id = nextId(data[key])
     data[key].push({ ...values, id, version: 0 })
